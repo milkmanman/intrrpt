@@ -87,7 +87,16 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		heroObj.GetComponent<HeroStatus>().SetValue(heroClass);
 	}
 
-	void addHero () {
+	public void addHero (ApplicantClass test) {
+		HeroStatusClass Hero = test;
+		if(HeroList.Count <= 5){
+			HeroList.Add(Hero);
+			Debug.Log("Adding Hero is Success");
+
+		} else {
+			Debug.LogError("Error : Over Capacity of heroes");
+		}
+		SaveHero();
 	}
 
 	void deleteHero (string HeroName) {
@@ -105,15 +114,19 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		return Hero;
 	}
 
-	void SaveHero (HeroStatusClass hero, string heronumber) {
-		PlayerPrefs.SetString(heronumber + ".Name", hero.Name);
-		PlayerPrefs.SetString(heronumber + ".Gender", hero.Gender);
-		PlayerPrefs.SetInt(heronumber + ".Skin", hero.Skin);
-		PlayerPrefs.SetString(heronumber + ".Costume", hero.Costume);
-		PlayerPrefs.SetInt(heronumber + ".CostumeLv", hero.CostumeLv);
-		PlayerPrefs.SetInt(heronumber + ".Heroism", hero.Heroism);
-		PlayerPrefs.SetInt(heronumber + ".Status", hero.Status);
-		PlayerPrefs.Save ();
+	void SaveHero () {
+		for(int i = 1; i <= HeroList.Count - 1; i++){
+
+					PlayerPrefs.SetString("Hero" + i.ToString() + ".Name", HeroList[i].Name);
+					PlayerPrefs.SetString("Hero" + i.ToString() + ".Gender", HeroList[i].Gender);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Skin", HeroList[i].Skin);
+					PlayerPrefs.SetString("Hero" + i.ToString() + ".Costume", HeroList[i].Costume);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".CostumeLv", HeroList[i].CostumeLv);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Heroism", HeroList[i].Heroism);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Status", HeroList[i].Status);
+					PlayerPrefs.Save ();
+
+		}
 	}
 
 	void RemoveHero (string heronumber) {
@@ -270,6 +283,7 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		var heroList = new List<string>(){"Peter", "Banner", "Gwen", "Tony", "Sheldon", "Takahiro", "Sayaka"};
 		List<int> a = RandomIntList(0,6,4);
 		string prsnl1 = "likes godzilla";
+		string prsnl2 = "80's Movie fan";
 		for(int i = 1; i <= 4; i++){
 
 			ApplicantClass hero = new ApplicantClass();
@@ -278,6 +292,7 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 			hero.Motivation = Random.Range(15, 21)*5;
 			hero.Message = "HERO? I JUST WANT TO BE IT. \nWANT TO DEFEND MYSELF FROM KICKASS.";
 			hero.Personality1 = prsnl1;
+			hero.Personality2 = prsnl2;
 			RecruitHeroList.Add(hero);
 		}
 	}
