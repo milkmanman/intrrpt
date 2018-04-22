@@ -16,7 +16,7 @@ public class HUD : MonoBehaviour {
 	}
 
 	public void GoToCity () {
-		Application.LoadLevel("City");
+		SceneController.Instance.LoadingScene("City");
 	}
 
 /*	public void RefreshResource () {

@@ -19,6 +19,6 @@ public class CityHUD : MonoBehaviour {
 	}
 
 	public void BackToBase () {
-		Application.LoadLevel("Base");
+		SceneController.Instance.LoadingScene("Base");
 	}
 }

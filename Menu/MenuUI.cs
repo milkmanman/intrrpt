@@ -27,7 +27,7 @@ public class MenuUI : MonoBehaviour {
 
 
 	public void LoadCityScene(){
-		StartCoroutine (LoadSceneAndSetActive ("Base"));
+		SceneController.Instance.LoadingScene("Base");
 	}
 
 	private IEnumerator LoadSceneAndSetActive (string sceneName)
