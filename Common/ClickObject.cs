@@ -26,14 +26,53 @@ public class ClickObject : MonoBehaviour {
 	void Update () {
 
 		if (Input.GetMouseButtonDown(0)) {
-  			if (EventSystem.current.IsPointerOverGameObject()) return;
-				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-				RaycastHit hit = new RaycastHit();
+			if (EventSystem.current.IsPointerOverGameObject()) return;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit = new RaycastHit();
 
 			if (Physics.Raycast(ray, out hit)){
 				GameObject obj = hit.collider.gameObject;
 				AudioManager.Instance.PlaySE(1);
 
+				switch(obj.tag){
+					case "Character/Hero" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(1);
+						GameObject.Find("HeroUI").GetComponent<HeroUI>().Reflesh(obj.GetComponent<HeroStatus>().heroClass);
+						break;
+					case "Character/Mission" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(2);
+						break;
+					case "Character/Police" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(3);
+						break;
+					case "Character/Develop" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(4);
+						break;
+					case "Character/WholeUI" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(5);
+						break;
+					case "Character/Medic" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(6);
+						break;
+					case "Character/Recruit" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(8);
+						break;
+					case "Arrow" :
+						ShortMissionUI.HoldArrow = obj;
+						obj.GetComponent<Arrow>().GetClicked();
+						break;
+					default :
+						GUI.GetComponent<UIActivator>().Activator(0);
+						break;
+				}
+/*
 				if (obj.tag == "Character/Hero") {
 					FocusCamera(obj);
 					GUI.GetComponent<UIActivator>().Activator(1);
@@ -59,12 +98,17 @@ public class ClickObject : MonoBehaviour {
 						FocusCamera(obj);
 						GUI.GetComponent<UIActivator>().Activator(6);
 
+					}	else if (obj.tag == "Character/Recruit") {
+							FocusCamera(obj);
+							GUI.GetComponent<UIActivator>().Activator(8);
+
+
 				} else if (obj.tag == "Arrow") {
 					ShortMissionUI.HoldArrow = obj;
 					obj.GetComponent<Arrow>().GetClicked();
 				} else {
 					GUI.GetComponent<UIActivator>().Activator(0);
-				}
+				}*/
 			}
 		}
 	}

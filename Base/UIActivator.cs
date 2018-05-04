@@ -11,6 +11,7 @@ public class UIActivator : MonoBehaviour {
 	public GameObject WholeUI;
 	public GameObject MedicUI;
 	public GameObject OptionUI;
+	public GameObject RecruitUI;
 
 		public void Activator(int a){
 
@@ -21,6 +22,7 @@ public class UIActivator : MonoBehaviour {
 			WholeUI.SetActive(false);
 			MedicUI.SetActive(false);
 			OptionUI.SetActive(false);
+			RecruitUI.SetActive(false);
 
 
 			switch(a){
@@ -46,6 +48,9 @@ public class UIActivator : MonoBehaviour {
 				case 7:
 					OptionUI.SetActive(true);
 					break;
+				case 8:
+					RecruitUI.SetActive(true);
+				break;
 				default:
 					break;
 			}

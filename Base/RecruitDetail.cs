@@ -37,7 +37,8 @@ public class RecruitDetail : MonoBehaviour {
 	}
 
 	public void OnBackButtonClick(){
-		BackButton.onClick.AddListener(delegate{HeroUI.GetComponent<HeroUI>().CloseApplicantDetail();});
+		GameObject RecruitUI = GameObject.Find ("GUI/RecruitUI");
+		BackButton.onClick.AddListener(delegate{RecruitUI.GetComponent<RecruitUI>().CloseApplicantDetail();});
 	}
 
 }

@@ -17,19 +17,6 @@ public class MissionNode : MonoBehaviour {
 	void OnEnable () {
 		if (routine != null){
 			StartCoroutine(routine);
-			CheckSaveData();
-		}
-	}
-
-	void Start() {
-		CheckSaveData();
-	}
-
-	private void CheckSaveData(){
-		if(PlayerPrefs.GetString("Mission." + missioncls.MissionNo.ToString() + ".Phase") != ""){
-			MissionManager.Instance.LoadSADMissionProgress(missioncls, missioncls.MissionNo);
-			Debug.Log(missioncls.Route[1]);
-			Debug.Log("SAVEDATA EXIST");
 		}
 	}
 

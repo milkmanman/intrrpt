@@ -2,11 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Xml;
+
 
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 
 public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
+
+	public TextAsset MissionDB_Phase1;
+	public XmlDocument MissionDoc;
+	public TextAsset VillainInfoData;
+	public XmlDocument VillainDoc;
+
+	public List<int> completedMission;
+	public List<int> selectableMission;
+	public List<MissionClass> selectableMissionClassList;
 
 	IEnumerator routine1;
 	IEnumerator routine2;
@@ -29,38 +40,131 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		slot5 = new MissionClass();
 		slot6 = new MissionClass();
 
-	//example
-		MissionClass testmission = new MissionClass();
-		testmission.MissionNo = 2;
-		testmission.Route = new List<int> (){11, 21};
-		testmission.Finished = false;
-		SaveSADMissionProgress(testmission); //save
+		MissionDoc = new XmlDocument();
+		MissionDoc.LoadXml(MissionDB_Phase1.text);
+		VillainDoc = new XmlDocument();
+		VillainDoc.LoadXml(VillainInfoData.text);
 
-		//MissionClass loadedMission = LoadSADMissionProgress(16);
-		//Debug.Log("loadedMissionlist : " + loadedMission.Route[1] + loadedMission.Route[2]);
-		//Debug.Log("loadedMissionFinished : " +loadedMission.Finished); //load
-
-		//DeleteSADMissionProgress(16); //delete
+		completedMission = SetcCompletedMission();
+		selectableMission = SetSelectableMission();
+		selectableMissionClassList = setSelectableMissionList(selectableMission);
+		Debug.Log(selectableMissionClassList.Count);
 
 	}
 
-	public void SaveSADMissionProgress(MissionClass mc) {
-		SaveList<int>("Mission." + mc.MissionNo.ToString() + ".Phase", mc.Route);
-		PlayerPrefs.SetInt("Mission." + mc.MissionNo.ToString() + ".Finished",SaveBool(mc.Finished));
-		PlayerPrefs.Save ();
+
+
+	public List<int> SetcCompletedMission (){
+		//Playerprefs
+		List<int> returnList = new List<int>() {0, 1, 3};
+		return returnList;
 	}
 
-	public MissionClass LoadSADMissionProgress(MissionClass rtn ,int MissionNo) {
-		rtn.MissionNo = MissionNo;
-		rtn.Route = LoadList<int>("Mission." + MissionNo.ToString() + ".Phase");
-		rtn.Finished = LoadBool("Mission." + MissionNo.ToString() + ".Finished");
-		return rtn;
+	public List<int> SetSelectableMission (){
+		List<int> returnList = new List<int>();
+		int MissionQty = MissionDoc.FirstChild.ChildNodes.Count;
+
+		for(int i = 1; i <= MissionQty; i++){
+			XmlNode node0 = MissionDoc.SelectSingleNode(@"//mission[@id=" + i + "]/requireCompleted");
+
+			if(completedMission.Contains(int.Parse(node0.InnerText)) == true  && completedMission.Contains(i) == false){
+
+				returnList.Add(i);
+			}
+		}
+		return returnList;
 	}
 
-	public void DeleteSADMissionProgress(int MissionNo){
-		PlayerPrefs.DeleteKey("Mission." + MissionNo.ToString() + ".Phase");
-		PlayerPrefs.DeleteKey("Mission." + MissionNo.ToString() + ".Finished");
+	public List<MissionClass> setSelectableMissionList(List<int> list){
+		List<MissionClass> returnList = new List<MissionClass>();
+
+		for(int i = 1; i <= list.Count; i++){
+
+			int missionNo = list[i-1];
+			MissionClass MisInfo = new MissionClass();
+
+			XmlNode node0 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/name");
+			XmlNode node1 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/level");
+			XmlNode node2 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/type");
+			XmlNode node3 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/reward1Type");
+			XmlNode node4 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/reward1Value");
+			XmlNode node5 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/reward2Type");
+			XmlNode node6 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/reward2Value");
+			XmlNode node7 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/description");
+			XmlNode node8 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/villains");
+			XmlNode node11 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/villainInfo");
+			if(node11 != null){
+			int villainInfo = int.Parse(node11.InnerText);
+			XmlNode node9 = VillainDoc.SelectSingleNode(@"//villain[@id=" + villainInfo + "]/name");
+			XmlNode node10 = VillainDoc.SelectSingleNode(@"//villain[@id=" + villainInfo + "]/description");
+			MisInfo.VillainName = node9.InnerText;
+			MisInfo.VillainDescription = node10.InnerText;
+			}
+
+			if(node8 != null){
+				Dictionary<string, int> villaindir = InstantiateVillainDic(node8);
+				MisInfo.VillainList = AddVillanByDict(villaindir);
+			}
+
+			MisInfo.MissionNo = missionNo;
+			MisInfo.Name = node0.InnerText;
+			MisInfo.Level = int.Parse(node1.InnerText);
+			MisInfo.Type = int.Parse(node2.InnerText);
+			MisInfo.Reward1 = node3.InnerText;
+			MisInfo.Reward1val = int.Parse(node4.InnerText);
+			if(node5 != null){
+				MisInfo.Reward2 = node5.InnerText;
+				MisInfo.Reward2val = int.Parse(node6.InnerText);
+			}
+			MisInfo.Description = node7.InnerText;
+
+			returnList.Add(MisInfo);
+
+		}
+
+		return returnList;
 	}
+
+	private Dictionary<string, int> InstantiateVillainDic(XmlNode villainsNode){
+		Dictionary<string, int> ret = new Dictionary<string, int> ();
+		foreach(XmlNode node in villainsNode.ChildNodes){
+			ret.Add(node.Name, int.Parse(node.InnerText));
+		}
+		return ret;
+	}
+
+	private List<VillainStatusClass> AddVillanByDict (Dictionary<string, int> villanDict){
+		List<VillainStatusClass> ret = new List<VillainStatusClass>();
+
+		foreach(KeyValuePair<string, int> pair in villanDict){
+			for(int i= 1; i <= pair.Value; i++){
+				switch(pair.Key){
+					case "daredevil":
+						VillainStatusClass villan = new VillainStatusClass();
+						villan.Name = "shocker";
+						villan.Health = 100;
+						villan.Atk = 15f;
+						villan.Def = 0f;
+						ret.Add(villan);
+						break;
+					case "sniper":
+						VillainStatusClass Shocker = new VillainStatusClass();
+						Shocker.Name = "shocker";
+						Shocker.Health = 90;
+						Shocker.Atk = 10f;
+						Shocker.Def = 0f;
+						ret.Add(Shocker);
+						break;
+					default :
+						break;
+				}
+			}
+		}
+	return ret;
+	}
+
+
+
 
 
 	public void StartMission(HeroStatusClass hc, MissionClass missioncls){

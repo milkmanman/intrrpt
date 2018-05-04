@@ -34,7 +34,7 @@ public class HeroUI : MonoBehaviour {
 	 }
 
 	void Start () {
-		RefreshRecruits();
+		//RefreshRecruits();
 	}
 
 	public void Reflesh (HeroStatusClass hero) {
@@ -110,7 +110,7 @@ public class HeroUI : MonoBehaviour {
 		return ret;
 	}
 
-	public void RefreshRecruits(){
+/*	public void RefreshRecruits(){
 		HeroManager.Instance.RefleshRecruitList();
 		foreach (Transform item in RecruitField.transform) {
 			Destroy(item.gameObject);
@@ -138,7 +138,7 @@ public class HeroUI : MonoBehaviour {
 	public void CloseApplicantDetail(){
 		GameObject Hiring = HiringField.transform.Find("Detail").gameObject;
 		Hiring.SetActive(false);
-	}
+	}*/
 
 
 }
