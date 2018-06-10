@@ -11,13 +11,6 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 	public TextAsset PersonalityData;
 	public XmlDocument xmlDoc2;
 
-	public HeroStatusClass Hero1;
-	public HeroStatusClass Hero2;
-	public HeroStatusClass Hero3;
-	public HeroStatusClass Hero4;
-	public HeroStatusClass Hero5;
-	public HeroStatusClass Hero6 = null;
-
 	public List<HeroStatusClass> HeroList;
 
 	public GameObject prefabHero;
@@ -35,44 +28,6 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 						instantiateHeroes(HeroList[i-1], i);
 					}
 				}
-
-
-				/*if (PlayerPrefs.GetString ("Hero1.Name") != ""){
-					HeroList.Add(LoadHero("Hero1"));
-					instantiateHeroes(HeroList[0], 1);
-					//Hero1 = LoadHero("Hero1");
-					//instantiateHeroes(Hero1, 1);
-				}
-				if (PlayerPrefs.GetString ("Hero2.Name") != ""){
-					//Hero2 = LoadHero("Hero2");
-					//instantiateHeroes(Hero2, 2);
-					HeroList[2] = LoadHero("Hero2");
-					instantiateHeroes(HeroList[2], 2);
-				}
-				if (PlayerPrefs.GetString ("Hero3.Name") != ""){
-					//Hero3 = LoadHero("Hero3");
-					//instantiateHeroes(Hero3, 3);
-					HeroList[3] = LoadHero("Hero3");
-					instantiateHeroes(HeroList[3], 3);
-				}
-				if (PlayerPrefs.GetString ("Hero4.Name") != ""){
-					//Hero4 = LoadHero("Hero4");
-					//instantiateHeroes(Hero4, 4);
-					HeroList[4] = LoadHero("Hero4");
-					instantiateHeroes(HeroList[4], 4);
-				}
-				if (PlayerPrefs.GetString ("Hero5.Name") != ""){
-					//Hero5 = LoadHero("Hero5");
-					//instantiateHeroes(Hero5, 5);
-					HeroList[5] = LoadHero("Hero5");
-					instantiateHeroes(HeroList[5], 5);
-				}
-				if (PlayerPrefs.GetString ("Hero6.Name") != ""){
-					Hero6 = LoadHero("Hero6");
-					instantiateHeroes(Hero6, 6);
-					HeroList[6] = LoadHero("Hero1");
-					instantiateHeroes(HeroList[6], 1);
-				}*/
 
 				xmlDoc = new XmlDocument();
 				xmlDoc.LoadXml(CostumeData.text);
@@ -191,13 +146,6 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		foreach(HeroStatusClass HSC in HeroList){
 			rtnList.Add(HSC.Name + " - Status : " + convertStatus(HSC.Status));
 		}
-
-		/*rtnList.Add(Hero1.Name + " - Status : " + convertStatus(Hero1.Status));
-		if(Hero2 != null)rtnList.Add(Hero2.Name + " - Status : " + convertStatus(Hero2.Status));
-		if(Hero3 != null)rtnList.Add(Hero3.Name + " - Status : " + convertStatus(Hero3.Status));
-		if(Hero4 != null)rtnList.Add(Hero4.Name + " - Status : " + convertStatus(Hero4.Status));
-		if(Hero5 != null)rtnList.Add(Hero5.Name + " - Status : " + convertStatus(Hero5.Status));
-		if(Hero6 != null)rtnList.Add(Hero6.Name + " - Status : " + convertStatus(Hero6.Status));*/
 
 		Debug.Log("listcount: " + rtnList.Count);
 

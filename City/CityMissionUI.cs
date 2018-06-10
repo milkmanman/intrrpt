@@ -17,13 +17,17 @@ public class CityMissionUI : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		//mc = MissionManager.Instance.slot1;
-		remainEnemies = MissionInfo.transform.Find("RemainEnemies").GetComponent<Text>();
-		HeroName = MissionInfo.transform.Find("HeroName").GetComponent<Text>();
-		HPBar = MissionInfo.transform.Find("HP/Bar").GetComponent<Image>();
-		HPBar.fillAmount = 1.0f;
-		//HeroName.text = mc.AppliedHero.Name;
-		//maxHealth = mc.AppliedHero.MaxHealth;
+		if(MissionManager.Instance.MissionList[0] != null){
+			Debug.Log("MissionList[0]" + " - isnotnull");
+			mc = MissionManager.Instance.MissionList[0];
+			//mc = MissionManager.Instance.slot1;
+			remainEnemies = MissionInfo.transform.Find("RemainEnemies").GetComponent<Text>();
+			HeroName = MissionInfo.transform.Find("HeroName").GetComponent<Text>();
+			HPBar = MissionInfo.transform.Find("HP/Bar").GetComponent<Image>();
+			HPBar.fillAmount = 1.0f;
+			HeroName.text = mc.AppliedHero.Name;
+			maxHealth = mc.AppliedHero.MaxHealth;
+		}
 
 		/*if(mc != null){
 			battleLog.text = MissionManager.Instance.slot1.CombatLog;
@@ -53,8 +57,8 @@ public class CityMissionUI : MonoBehaviour {
 		while(mctest.ActiveFlg == true){
 			battleLog.text = mctest.CombatLog;
 			HPBar.fillAmount = (float)mctest.AppliedHero.Health / (float)mctest.AppliedHero.MaxHealth;
-			if(re != MissionManager.Instance.slot1.RemainVillains){
-				re = MissionManager.Instance.slot1.RemainVillains;
+			if(re != MissionManager.Instance.MissionList[0].RemainVillains){
+				re = MissionManager.Instance.MissionList[0].RemainVillains;
 				remainEnemies.text = "Remain Enemies : " + re.ToString();
 			}
 			yield return new WaitForSeconds(1);

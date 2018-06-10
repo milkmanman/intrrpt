@@ -18,34 +18,24 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	public List<int> completedMission;
 	public List<int> selectableMission;
 	public List<MissionClass> selectableMissionClassList;
-
-	IEnumerator routine1;
-	IEnumerator routine2;
-	IEnumerator routine3;
-	IEnumerator routine4;
-	IEnumerator routine5;
-	IEnumerator routine6;
-	public MissionClass slot1;
-	public MissionClass slot2;
-	public MissionClass slot3;
-	public MissionClass slot4;
-	public MissionClass slot5;
-	public MissionClass slot6;
+	public List<IEnumerator> routineList;
+	public List<MissionClass> MissionList;
 
 	void Awake () {
-		slot1 = new MissionClass();
-		slot2 = new MissionClass();
-		slot3 = new MissionClass();
-		slot4 = new MissionClass();
-		slot5 = new MissionClass();
-		slot6 = new MissionClass();
+
+		routineList = new List<IEnumerator>();
+		MissionList = new List<MissionClass>();
+		for(int i = 1; i <= 6; i++){
+			MissionClass emptyMC = new MissionClass();
+			MissionList.Add(emptyMC);
+		}
 
 		MissionDoc = new XmlDocument();
 		MissionDoc.LoadXml(MissionDB_Phase1.text);
 		VillainDoc = new XmlDocument();
 		VillainDoc.LoadXml(VillainInfoData.text);
 
-		completedMission = SetcCompletedMission();
+		completedMission = SetCompletedMission();
 		selectableMission = SetSelectableMission();
 		selectableMissionClassList = setSelectableMissionList(selectableMission);
 		Debug.Log(selectableMissionClassList.Count);
@@ -54,7 +44,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 
 
-	public List<int> SetcCompletedMission (){
+	public List<int> SetCompletedMission (){
 		//Playerprefs
 		List<int> returnList = new List<int>() {0, 1, 3};
 		return returnList;
@@ -164,44 +154,27 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	}
 
 
-
-
-
 	public void StartMission(HeroStatusClass hc, MissionClass missioncls){
-		missioncls.Time = CalculateTime();
-		if(slot1.ActiveFlg == false) {
-			slot1 = missioncls;
-			slot1.AppliedHero = hc;
-			routine1 = MissionProgless(hc, slot1);
-			StartCoroutine(routine1);
-		} else if (slot2.ActiveFlg == false) {
-			slot2 = missioncls;
-			slot2.AppliedHero = hc;
-			routine2 = MissionProgless(hc, slot2);
-			StartCoroutine(routine2);
-		} else if (slot3.ActiveFlg == false) {
-			slot3 = missioncls;
-			routine3 = MissionProgless(hc, slot3);
-			StartCoroutine(routine3);
-		} else if (slot4.ActiveFlg == false) {
-			slot4 = missioncls;
-			routine4 = MissionProgless(hc, slot4);
-			StartCoroutine(routine4);
-		} else if (slot5.ActiveFlg == false) {
-			slot5 = missioncls;
-			routine5 = MissionProgless(hc, slot5);
-			StartCoroutine(routine5);
-		} else if (slot6.ActiveFlg == false) {
-			slot6 = missioncls;
-			routine6 = MissionProgless(hc, slot6);
-			StartCoroutine(routine6);
+
+		int i = 1;
+
+		while(true){
+			if(MissionList[i-1].ActiveFlg == false || MissionList[i-1].ActiveFlg ==null){
+				MissionList[i-1] = missioncls;
+				MissionList[i-1].AppliedHero = hc;
+
+				IEnumerator misRoutine = MissionProgless(hc, MissionList[i-1]);
+				StartCoroutine(misRoutine);
+				routineList.Add(misRoutine);
+				Debug.Log("StartMissionClass" + "[" + i.ToString() + "]");
+				break;
+				if(MissionList.Count == i) break;
+			}
+			i++;
 		}
+
 	}
 
-	private int CalculateTime(){
-		int a = 10;
-		return a;
-	}
 
 	private IEnumerator MissionProgless (HeroStatusClass hc, MissionClass missioncls) {
 

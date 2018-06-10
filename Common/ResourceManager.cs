@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ResourceManager : SingletonMonoBehaviourFast<ResourceManager> {
 
-	private int Cash = 1000;
+	public int Cash = 1000;
 	private int Intel = 200;
 	private int Tech = 1000;
 	private int Medic = 3000;
@@ -61,6 +61,23 @@ public class ResourceManager : SingletonMonoBehaviourFast<ResourceManager> {
 		a[3] = Medic;
 		a[4] = Tailor;
 		return a;
+	}
+
+	public int showResource(string Type){
+		int rtnInt;
+		switch(Type){
+			case "Cash":
+				rtnInt = Cash;
+				break;
+			case "Tech":
+				rtnInt = Tech;
+				break;
+			default:
+				rtnInt = 0;
+				break;
+		}
+
+		return rtnInt;
 	}
 
 	private void ShortResourceLog (string ResourceType, int value, bool plus) {

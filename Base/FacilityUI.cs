@@ -7,10 +7,12 @@ using System.Xml;
 public class FacilityUI : MonoBehaviour {
 
 	public GameObject FacilityNodeField;
+	public GameObject DevedFacilityNodeField;
 	public GameObject FacilityDetailField;
 	public GameObject HUD;
 	public TextAsset FacilityDatabase;
-	public XmlDocument xmlDoc;
+
+	public Text GranadeCount;
 
 	public List<GameObject> FacilityObject;
 
@@ -20,55 +22,71 @@ public class FacilityUI : MonoBehaviour {
 	[SerializeField]
 		RectTransform prefab = null;
 
-	void Awake () {
-		//tmp setting
-		FacilityManager.Instance.DronePhase = 1;
-		FacilityManager.Instance.JumpingDronePhase = 0;
+	public Text Resource;
+	public GameObject MemberNodeField;
+	[SerializeField]
+		RectTransform MemberNodePrefab = null;
 
-		xmlDoc = new XmlDocument();
-		xmlDoc.LoadXml(FacilityDatabase.text);
-	}
+	public GameObject WIPNodeField;
+	[SerializeField]
+		RectTransform WIPNodePrefab = null;
+
 
 	void Start () {
 
-			string[,] arr = FacilityManager.Instance.facilityarray();
-			int length = arr.GetLength(0);
+			RefreshGranade();
+			//string[,] arr = FacilityManager.Instance.facilityarray();
+			//int length = arr.GetLength(0);
+			List<FacilityClass> FacilityList = new List<FacilityClass>();
+			FacilityList = FacilityManager.Instance.FacilityList;
+			List<FacilityClass> DevedFacilityList = new List<FacilityClass>();
+			DevedFacilityList = FacilityManager.Instance.DevedFacilityList;
+			Debug.Log("counts counts counts : " + FacilityList.Count.ToString());
 
-			for(int i = 0; i<= length - 1; i++){
+			InstantiateFacilityNode(FacilityList, FacilityNodeField);
+			InstantiateFacilityNode(DevedFacilityList, DevedFacilityNodeField);
+
+
+			/*for(int i = 0; i<= FacilityList.Count - 1; i++){
 				var item = GameObject.Instantiate(prefab) as RectTransform;
+				FacilityClass fc = FacilityList[i];
 				item.SetParent(FacilityNodeField.transform, false);
-
-				string tmpxmldir = "//" + arr[i, 0] + "[@id=" + arr[i, 1] +"]";
-				Debug.Log(tmpxmldir);
-				string iconPass = arr[i, 0] + "_" + arr[i, 1];
-
-				XmlNode node0 = xmlDoc.SelectSingleNode(@"" + tmpxmldir + "/name");
-				item.transform.Find("Text").GetComponent<Text>().text = node0.InnerText;
+				item.GetComponent<FacilityNode>().facilitycls = fc;
+				item.GetComponent<FacilityNode>().RefleshDisplay();
 
 				Button button = item.GetComponent<Button>();
-				button.onClick.AddListener(delegate{OnFacilityNodeClicked(tmpxmldir, iconPass);});
-			}
+				button.onClick.AddListener(delegate{OnFacilityNodeClicked( fc );});
+
+			}*/
+
+			RefreshStuff();
 	}
 
-	public void OnFacilityNodeClicked(string dir, string iconpass) {
-		this.gameObject.transform.Find("Field").GetComponent<UITransition>().UITransitioner(false);
-		RefreshFacilityDetail(dir, iconpass);
+	private void InstantiateFacilityNode(List<FacilityClass> FacilityList, GameObject parent){
+		for(int i = 0; i<= FacilityList.Count - 1; i++){
+			var item = GameObject.Instantiate(prefab) as RectTransform;
+			FacilityClass fc = FacilityList[i];
+			item.SetParent(parent.transform, false);
+			item.GetComponent<FacilityNode>().facilitycls = fc;
+			item.GetComponent<FacilityNode>().RefleshDisplay();
 
-	}
+			Button button = item.GetComponent<Button>();
+			button.onClick.AddListener(delegate{OnFacilityNodeClicked( fc );});
+			//button.onClick.AddListener(delegate{OnFacilityNodeClicked(tmpxmldir, iconPass);});
 
-	public void OnAgreeButtonClicked(){
-
-		XmlNode node0 = xmlDoc.SelectSingleNode(@"" + selectedxmldir + "/cost1");
-		XmlNode node1 = xmlDoc.SelectSingleNode(@"" + selectedxmldir + "/cost1type");
-
-		ResourceManager.Instance.DecreaseResource(node0.InnerText, int.Parse(node1.InnerText));
-
-		if(xmlDoc.SelectSingleNode(@"" + selectedxmldir + "/cost2") != null ){
-			XmlNode node2 = xmlDoc.SelectSingleNode(@"" + selectedxmldir + "/cost2");
-			XmlNode node3 = xmlDoc.SelectSingleNode(@"" + selectedxmldir + "/cost2type");
-			ResourceManager.Instance.DecreaseResource(node2.InnerText, int.Parse(node3.InnerText));
 		}
-		this.gameObject.transform.Find("Field").GetComponent<UITransition>().UITransitioner(true);
+	}
+
+	public void OnFacilityNodeClicked(FacilityClass fc) {
+		RefreshFacilityDetail(fc);
+
+	}
+
+	public void OnAgreeButtonClicked(FacilityClass fc){
+
+		FacilityManager.Instance.SpendResource(fc);
+		GameObject node = InstantiateWIPNode(fc);
+		FacilityManager.Instance.StartDevelop(fc, node);
 
 		InstantiateFacility();
 		Debug.Log("agreebutton values : " + selectedxmldir);
@@ -88,29 +106,67 @@ public class FacilityUI : MonoBehaviour {
 		test_prefab.name = "InstantiateTable";
 	}
 
-	private void RefreshFacilityDetail(string xmldir, string iconPass){
-		selectedxmldir = xmldir;
+	private void RefreshFacilityDetail(FacilityClass fc){
+		//selectedxmldir = xmldir;
 		string cost;
+		//Debug.Log("xmldir : " + xmldir);
 
-		XmlNode node0 = xmlDoc.SelectSingleNode(@"" + xmldir + "/name");
-		FacilityDetailField.transform.Find("Name").GetComponent<Text>().text = node0.InnerText;
-		XmlNode node1 = xmlDoc.SelectSingleNode(@"" + xmldir + "/description");
-		FacilityDetailField.transform.Find("Description").GetComponent<Text>().text = node1.InnerText;
-
-
-		XmlNode node2 = xmlDoc.SelectSingleNode(@"" + xmldir + "/cost1");
-		XmlNode node3 = xmlDoc.SelectSingleNode(@"" + xmldir + "/cost1type");
-		cost = node2.InnerText + " : " + node3.InnerText;
-
-		if(xmlDoc.SelectSingleNode(@"" + xmldir + "/cost2") != null){
-			XmlNode node4 = xmlDoc.SelectSingleNode(@"" + xmldir + "/cost2");
-			XmlNode node5 = xmlDoc.SelectSingleNode(@"" + xmldir + "/cost2type");
-			cost += "\n" + node4.InnerText + " : " + node5.InnerText;
+		FacilityDetailField.transform.Find("Name").GetComponent<Text>().text = fc.Name;
+		FacilityDetailField.transform.Find("Description").GetComponent<Text>().text = fc.Description;
+		cost = fc.Cost1Type + " : " + fc.Cost1Value;
+		if(fc.Cost2Type != null){
+			cost += "\n" + fc.Cost2Type + " : " + fc.Cost2Value;
 		}
 
 		FacilityDetailField.transform.Find("Cost").GetComponent<Text>().text = cost;
+		if(Resources.Load<Sprite>("UI/FacilityIcons/" + fc.IconPass) != null){
+			FacilityDetailField.transform.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/FacilityIcons/" + fc.IconPass);
+		}
 
-		FacilityDetailField.transform.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/FacilityIcons/" + iconPass);
+		int nowResource = ResourceManager.Instance.Cash - fc.Cost1Value;
+		string resourceChanges = "Cash : " + ResourceManager.Instance.Cash.ToString() + " -> " + nowResource.ToString();
+		FacilityDetailField.transform.Find("Resource").GetComponent<Text>().text = resourceChanges;
+
+
+
+		Button button = FacilityDetailField.transform.Find("AgreeButton").GetComponent<Button>();
+		button.onClick.RemoveAllListeners();
+		button.onClick.AddListener(delegate{OnAgreeButtonClicked(fc);});
+		if(nowResource < 0){
+			button.interactable = false;
+		} else {
+			button.interactable = true;
+		}
+
 	}
+
+	private void RefreshStuff(){
+		List<DevelopMemberClass> MemberList =  FacilityManager.Instance.DevelopMembers;
+		for(int i = 1; i <= MemberList.Count; i++){
+			var item = GameObject.Instantiate(MemberNodePrefab) as RectTransform;
+			item.SetParent(MemberNodeField.transform, false);
+			DevelopMemberClass test =  new DevelopMemberClass();
+			test = MemberList[i-1];
+			item.GetComponent<DevelopMemberNode>().Name.text = test.Name;
+			//item.GetComponent<RecruitNode>().RefleshRecruit();
+			//Button button = item.GetComponent<RecruitNode>().SelectButton;
+			//RecruitNode node = item.GetComponent<RecruitNode>();
+			//button.onClick.AddListener(delegate{HeroManager.Instance.HoldApplicant = test;});
+			//button.onClick.AddListener(delegate{ShowApplicantDetail();});
+			Resource.text = ResourceManager.Instance.showResource("Tech").ToString();
+		}
+	}
+
+	private GameObject InstantiateWIPNode(FacilityClass fc){
+		var item = GameObject.Instantiate(WIPNodePrefab) as RectTransform;
+		item.SetParent(WIPNodeField.transform, false);
+		return item.gameObject;
+	}
+
+	public void RefreshGranade(){
+		GranadeCount.text = "x " + FacilityManager.Instance.FlashGranadeCount.ToString();
+		Debug.Log("xxx xxx xxx :" + FacilityManager.Instance.FlashGranadeCount.ToString());
+	}
+
 
 }
