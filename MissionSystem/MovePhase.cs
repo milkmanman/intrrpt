@@ -5,11 +5,36 @@ using UnityEngine;
 public class MovePhase : MissionPhase {
 
 	public string Type = "Move";
-	
-string destination 目的地
-string distance 距離(near, middle, far)
-int obstacle (0 ~ 100) 障害 遅くなる
-string bridgemsg 着いた時に一言 default null
-string mustmsg 絶対途中に入る言葉
+	public string Destination;
+	//public int Distance; //10 - 100
+	//public int Obstacle; // 0 - 100
+	public string BridgeMsg;
+	//public string MustMsg;
+	public string Log;
+
+	public override IEnumerator PhaseCoroutine(NewMissionClass mc) {  
+		PrintLog(mc, mc.AppliedHero.Name + " : Moving to " + Destination);
+		int count = 0;
+
+		while (count <= 100){
+
+			if (count % 25 == 0){
+				PrintLog(mc, "Moving to " + Destination + ", at least " + count.ToString() + "%");
+			}
+
+			yield return new WaitForSeconds (0.1f);  
+			count++;
+		}
+		
+		PrintLog(mc, "Arrieved at " + Destination + ", " + BridgeMsg);
+	}
+
+
+	private void PrintLog(NewMissionClass missioncls, string log){
+		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
+		Log = Log + log + "\n";
+		Debug.Log(log);
+	}
+
 
 }

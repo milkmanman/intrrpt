@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MissionPhase : MonoBehaviour {
+public class MissionPhase {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public virtual IEnumerator PhaseCoroutine(NewMissionClass mc) {  
+		yield return new WaitForSeconds (0.5f);  
+		mc.MissionLog += "error in the phase!";
+
 	}
 }

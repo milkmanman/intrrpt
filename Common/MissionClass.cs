@@ -25,6 +25,8 @@ public class MissionClass {
 	private string combatLog;
 	private int remainVillains;
 	private HeroStatusClass appliedHero;
+	private string missionLog;
+
 
 
 	//for Search and Destroy
@@ -137,5 +139,11 @@ public class MissionClass {
 		get {return appliedHero;}
 		set {appliedHero = value;}
 	}
+
+	public string MissionLog{
+		get {return missionLog;}
+		set {missionLog = value;}
+	}
+
 
 }

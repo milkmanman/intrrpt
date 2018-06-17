@@ -17,15 +17,12 @@ public class NewMissionClass {
 	private bool success;
 	private List<MissionPhase> phaseList;
 
-
 	private string villainName;
 	private string villainDescription;
 	private int villainInfo;
-
-	private List<VillainStatusClass> villainList;
-	private string combatLog;
-	private int remainVillains;
 	private HeroStatusClass appliedHero;
+	private string missionLog;
+
 
 
 
@@ -90,16 +87,6 @@ public class NewMissionClass {
 		set {success = value;}
 	}
 
-	public List<VillainStatusClass> VillainList{
-		get {return villainList;}
-		set {villainList = value;}
-	}
-
-	public string CombatLog{
-		get {return combatLog;}
-		set {combatLog = value;}
-	}
-
 	public List<int> Route{
 		get {return route;}
 		set {route = value;}
@@ -125,11 +112,6 @@ public class NewMissionClass {
 		set {villainInfo = value;}
 	}
 
-	public int RemainVillains{
-		get {return remainVillains;}
-		set {remainVillains = value;}
-	}
-
 	public HeroStatusClass AppliedHero{
 		get {return appliedHero;}
 		set {appliedHero = value;}
@@ -138,6 +120,11 @@ public class NewMissionClass {
 	public List<MissionPhase> PhaseList{
 		get {return phaseList;}
 		set {phaseList = value;}
+	}
+
+	public string MissionLog{
+		get {return missionLog;}
+		set {missionLog = value;}
 	}
 
 }
