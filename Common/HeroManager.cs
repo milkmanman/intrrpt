@@ -15,27 +15,23 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 
 	public GameObject prefabHero;
 
-	public List<ApplicantClass> RecruitHeroList;
-	public ApplicantClass HoldApplicant;
-
 	void Awake () {
-				HeroList = new List<HeroStatusClass>();
+		HeroList = new List<HeroStatusClass>();
 
 
-				for(int i = 1; i <= 6; i++){
-					if(PlayerPrefs.GetString ("Hero" + i.ToString() + ".Name") != ""){
-						HeroList.Add(LoadHero("Hero" + i.ToString()));
-						instantiateHeroes(HeroList[i-1], i);
-					}
-				}
+		for(int i = 1; i <= 6; i++){
+			if(PlayerPrefs.GetString ("Hero" + i.ToString() + ".Name") != ""){
+				HeroList.Add(LoadHero("Hero" + i.ToString()));
+				instantiateHeroes(HeroList[i-1], i);
+			}
+		}
 
-				xmlDoc = new XmlDocument();
-				xmlDoc.LoadXml(CostumeData.text);
+		xmlDoc = new XmlDocument();
+		xmlDoc.LoadXml(CostumeData.text);
 
-				xmlDoc2 = new XmlDocument();
-				xmlDoc2.LoadXml(PersonalityData.text);
+		xmlDoc2 = new XmlDocument();
+		xmlDoc2.LoadXml(PersonalityData.text);
 
-				RefleshRecruitList();
 	}
 
 	void instantiateHeroes (HeroStatusClass heroClass, int n) {
@@ -47,8 +43,8 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		heroObj.GetComponent<HeroStatus>().SetValue(heroClass);
 	}
 
-	public void addHero (ApplicantClass test) {
-		HeroStatusClass Hero = test;
+	public void addHero (RecruitClass test) {
+		HeroStatusClass Hero = test.CloneHero();
 		if(HeroList.Count <= 5){
 			HeroList.Add(Hero);
 			Debug.Log("Adding Hero is Success");
@@ -118,25 +114,6 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 			}
 		}
 
-		/*if (Hero1 != null && Hero1.Status == 0){
-			rtnList.Add(Hero1.Name);
-		}
-		if (Hero2 != null && Hero2.Status == 0){
-			rtnList.Add(Hero2.Name);
-		}
-		if (Hero3 != null && Hero3.Status == 0){
-			rtnList.Add(Hero3.Name);
-		}
-		if (Hero4 != null && Hero4.Status == 0){
-			rtnList.Add(Hero4.Name);
-		}
-		if (Hero5 != null && Hero5.Status == 0){
-			rtnList.Add(Hero5.Name);
-		}
-		if (Hero6 != null && Hero6.Status == 0){
-			rtnList.Add(Hero6.Name);
-		}*/
-
 		return rtnList;
 	}
 
@@ -180,19 +157,6 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 			}
 		}
 
-		/*if (Hero1 != null && Hero1.Status == 1){
-			rtnList.Add(Hero1.Name);
-		}
-		if (Hero2 != null && Hero2.Status == 1){
-			rtnList.Add(Hero2.Name);
-		}
-		if (Hero3 != null && Hero3.Status == 1){
-			rtnList.Add(Hero3.Name);
-		}
-		if (Hero4 != null && Hero4.Status == 1) rtnList.Add(Hero4.Name);
-		if (Hero5 != null && Hero5.Status == 1) rtnList.Add(Hero5.Name);
-		if (Hero6 != null && Hero6.Status == 1) rtnList.Add(Hero6.Name);*/
-
 		return rtnList;
 	}
 
@@ -231,67 +195,5 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 
 	}
 
-	public void RefleshRecruitList(){
-		//Debug.Log(test[0] + " : " + test[1]);
-		RecruitHeroList = new List<ApplicantClass>();
-		var heroList = new List<string>(){"Peter", "Banner", "Gwen", "Tony", "Sheldon", "Takahiro", "Sayaka"};
-		List<int> a = RandomIntList(0,6,4);
-		//string prsnl1 = "likes godzilla";
-		//string prsnl2 = "80's Movie fan";
-		for(int i = 1; i <= 4; i++){
-
-			ApplicantClass hero = new ApplicantClass();
-			hero.Name = heroList[ a[i-1] ];
-			hero.Heroism = Random.Range(15, 21)*5;
-			hero.Motivation = Random.Range(15, 21)*5;
-			hero.Message = "HERO? I JUST WANT TO BE IT. \nWANT TO DEFEND MYSELF FROM KICKASS.";
-			List<string> prsnl = SetPersonality();
-			hero.Personality1 = prsnl[0];
-			hero.Personality2 = prsnl[1];
-			RecruitHeroList.Add(hero);
-		}
-	}
-
-	private List<string> SetPersonality () {
-		List<string> returnList = new List<string>();
-
-		Debug.Log(xmlDoc2.SelectSingleNode(@"//" + "category[@id" + "1" + "]/node[@id" + "1" + "]"));
-//@"//mission[@id=" + missionNo + "]/name"
-		var personality1 = new List<string>(){
-			"like 90's hip-hop",
-			"like post apocalyptic movies",
-			"like playing FPS",
-			"NOEL GALLAGHER FREAK"
-		};
-
-		var personality2 = new List<string>(){
-			"born in poor family",
-			"high school student",
-			"HIGH SCHOOL TEACHER",
-			"have two girl-friends"
-		};
-
-		returnList.Add(personality1[Random.Range(0, 4)]);
-		returnList.Add(personality2[Random.Range(0, 4)]);
-
-		return returnList;
-	}
-
-
-	private List<int> RandomIntList(int min, int max, int count) {
-		List<int> returnInt = new List<int>();
-		List<int> numbers = new List<int>();
-
-		for (int i = min; i <= max; i++) {
-				numbers.Add(i);
-		}
-		while (count-- > 0) {
-				int index = Random.Range(0, numbers.Count);
-				int ransu = numbers[index];
-				returnInt.Add(ransu);
-				numbers.RemoveAt(index);
-		}
-		return returnInt;
-	}
 
 }

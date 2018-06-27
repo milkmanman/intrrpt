@@ -12,7 +12,7 @@ public class MovePhase : MissionPhase {
 	//public string MustMsg;
 	public string Log;
 
-	public override IEnumerator PhaseCoroutine(NewMissionClass mc) {  
+	public override IEnumerator PhaseCoroutine(MissionClass mc) {  
 		PrintLog(mc, mc.AppliedHero.Name + " : Moving to " + Destination);
 		int count = 0;
 
@@ -30,7 +30,7 @@ public class MovePhase : MissionPhase {
 	}
 
 
-	private void PrintLog(NewMissionClass missioncls, string log){
+	private void PrintLog(MissionClass missioncls, string log){
 		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
 		Log = Log + log + "\n";
 		Debug.Log(log);

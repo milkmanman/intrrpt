@@ -16,6 +16,7 @@ public class NewMissionClass {
 	private bool activeflg;
 	private bool success;
 	private List<MissionPhase> phaseList;
+	private List<string> phaseHistory;
 
 	private string villainName;
 	private string villainDescription;
@@ -120,6 +121,11 @@ public class NewMissionClass {
 	public List<MissionPhase> PhaseList{
 		get {return phaseList;}
 		set {phaseList = value;}
+	}
+
+	public List<string> PhaseHistory{
+		get {return phaseHistory;}
+		set {phaseHistory = value;}
 	}
 
 	public string MissionLog{

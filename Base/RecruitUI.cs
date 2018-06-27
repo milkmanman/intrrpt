@@ -6,42 +6,75 @@ using UnityEngine.UI;
 
 public class RecruitUI : MonoBehaviour {
 
-	public GameObject HiringField;
-	public GameObject RecruitField;
+	public GameObject HeroHiringField;
+	public GameObject DevelopHiringField;
+	public GameObject HeroRecruitField;
+	public GameObject DevelopRecruitField;
+	public GameObject Detail;
 	public RectTransform RecruitNodePrefab;
+
 
 	// Use this for initialization
 	void Start () {
-		RefreshRecruits();
+
+		RefreshRecruits("Hero");
+		RefreshRecruits("Develop");
+
 	}
 
-	public void RefreshRecruits(){
-		HeroManager.Instance.RefleshRecruitList();
-		foreach (Transform item in RecruitField.transform) {
+	public void RefreshRecruits(string type){
+
+		GameObject field = null;
+
+		if(type == "Hero"){
+			field = HeroRecruitField;
+		} else if(type == "Develop"){
+			field = DevelopRecruitField;
+		}
+
+		RecruitManager.Instance.RefleshRecruitList(type);
+		Debug.Log("test recruit debug : " + RecruitManager.Instance.RecruitHeroList[1].Name);
+		foreach (Transform item in field.transform) {
 			Destroy(item.gameObject);
 		}
 		for(int i = 1; i <= 4; i++){
 				var item = GameObject.Instantiate(RecruitNodePrefab) as RectTransform;
-				item.SetParent(RecruitField.transform, false);
-				ApplicantClass test =  new ApplicantClass();
-				test = HeroManager.Instance.RecruitHeroList[i-1];
+				item.SetParent(field.transform, false);
+				RecruitClass test =  new RecruitClass();
+				if(type == "Hero"){
+					test = RecruitManager.Instance.RecruitHeroList[i-1];
+				} else if(type == "Develop"){
+					test = RecruitManager.Instance.RecruitDevelopList[i-1];
+				}
 				item.GetComponent<RecruitNode>().Hero = test;
 				item.GetComponent<RecruitNode>().RefleshRecruit();
 				Button button = item.GetComponent<RecruitNode>().SelectButton;
 				RecruitNode node = item.GetComponent<RecruitNode>();
-				button.onClick.AddListener(delegate{HeroManager.Instance.HoldApplicant = test;});
+				button.onClick.AddListener(delegate{RecruitManager.Instance.HoldRecruit = test;});
 				button.onClick.AddListener(delegate{ShowApplicantDetail();});
 		}
 	}
 
 	public void ShowApplicantDetail(){
-		GameObject Hiring = HiringField.transform.Find("Detail").gameObject;
+		GameObject Hiring = Detail;
+
 		Hiring.SetActive(true);
-		Hiring.GetComponent<RecruitDetail>().Reflesh(HeroManager.Instance.HoldApplicant);
+		Hiring.GetComponent<RecruitDetail>().Reflesh(RecruitManager.Instance.HoldRecruit);
 	}
 
 	public void CloseApplicantDetail(){
-		GameObject Hiring = HiringField.transform.Find("Detail").gameObject;
+		GameObject Hiring = Detail;
 		Hiring.SetActive(false);
 	}
+
+	public void ChangeTab(string type){
+		if(type == "Hero"){
+			HeroHiringField.SetActive(true);
+			DevelopHiringField.SetActive(false);
+		} else if(type == "Develop"){
+			DevelopHiringField.SetActive(true);
+			HeroHiringField.SetActive(false);
+		}
+	}
+
 }

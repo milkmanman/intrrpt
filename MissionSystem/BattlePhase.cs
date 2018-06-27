@@ -12,7 +12,7 @@ public class BattlePhase : MissionPhase {
 
 
 
-	public override IEnumerator PhaseCoroutine (NewMissionClass missioncls) {
+	public override IEnumerator PhaseCoroutine (MissionClass missioncls) {
 
 		Debug.Log("villian list : " + villainList.Count);
 		missioncls.AppliedHero.Health = 300;
@@ -76,7 +76,7 @@ public class BattlePhase : MissionPhase {
 
 
 
-	private void PrintLog(NewMissionClass missioncls, string log){
+	private void PrintLog(MissionClass missioncls, string log){
 		if(log.Contains("Villain")){
 			log = log.Replace("Villain", "<color=#ff0000>Villain</color>");
 		} else if (log.Contains("Hero")) {

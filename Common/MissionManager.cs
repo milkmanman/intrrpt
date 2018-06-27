@@ -91,11 +91,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			MisInfo.VillainDescription = node10.InnerText;
 			}
 
-			if(node8 != null){
-				Dictionary<string, int> villaindir = InstantiateVillainDic(node8);
-				MisInfo.VillainList = AddVillanByDict(villaindir);
-			}
-
 			MisInfo.MissionNo = missionNo;
 			MisInfo.Name = node0.InnerText;
 			MisInfo.Level = int.Parse(node1.InnerText);
@@ -108,11 +103,76 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			}
 			MisInfo.Description = node7.InnerText;
 
+			MisInfo.PhaseList = setPhaseList(i);
+
 			returnList.Add(MisInfo);
 
 		}
 
 		return returnList;
+	}
+
+	public List<MissionPhase> setPhaseList(int missionNo){
+		List<MissionPhase> rtnList = new List<MissionPhase>();
+
+		XmlNode node0 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/phases");
+		XmlNode phase1 = node0.SelectSingleNode("./phase[@id=1]/type");
+		for(int i = 1; i <= node0.ChildNodes.Count; i++){
+			XmlNode TypeNode = node0.SelectSingleNode("./phase[@id=" + i + "]/type");
+			switch(TypeNode.InnerText){
+				case "Move" : 
+					MovePhase move = new MovePhase();
+					XmlNode mv1 = node0.SelectSingleNode("./phase[@id=" + i + "]/destination");
+					XmlNode mv2 = node0.SelectSingleNode("./phase[@id=" + i + "]/bridgemsg");
+					move.Destination = mv1.InnerText;
+					move.BridgeMsg = mv2.InnerText;
+					rtnList.Add(move);
+
+					break;
+
+				case "Talk" :
+					TalkPhase talk = new TalkPhase();
+					List<Line> lines = new List<Line>();
+					XmlNode lns = node0.SelectSingleNode("./phase[@id=" + i + "]/lines");
+					for(int ino = 1; ino <= lns.ChildNodes.Count; ino++){
+
+						Line lineclass = new Line();
+						XmlNode tlk1 = node0.SelectSingleNode("./phase[@id=" + i + "]/lines/line[@id=" + ino + "]/who");
+						XmlNode tlk2 = node0.SelectSingleNode("./phase[@id=" + i + "]/lines/line[@id=" + ino + "]/what");
+						lineclass.who = tlk1.InnerText;
+						lineclass.what = tlk2.InnerText;
+						lines.Add(lineclass);
+					}
+					talk.lines = lines;
+					rtnList.Add(talk);
+
+					break;
+
+				case "Battle" :
+					BattlePhase battle = new BattlePhase();
+					List<VillainStatusClass> villainList = new List<VillainStatusClass>();
+					XmlNode vln = node0.SelectSingleNode("./phase[@id=" + i + "]/villains");
+					Debug.Log("villainnode : " + vln.InnerText);
+					Dictionary<string, int> villaindir = InstantiateVillainDic(vln);
+					battle.villainList = AddVillanByDict(villaindir);
+
+								//XmlNode node8 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/villains");
+								//Dictionary<string, int> villaindir = InstantiateVillainDic(node8);
+								//MisInfo.VillainList = AddVillanByDict(villaindir);
+					
+					rtnList.Add(battle);
+
+					break;
+
+				default :
+					break;
+
+			}
+
+		}
+
+		return rtnList;
+
 	}
 
 	private Dictionary<string, int> InstantiateVillainDic(XmlNode villainsNode){
@@ -133,7 +193,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 						VillainStatusClass villan = new VillainStatusClass();
 						villan.Name = "shocker";
 						villan.Health = 100;
-						villan.Atk = 15f;
+						villan.Atk = 10f;
 						villan.Def = 0f;
 						ret.Add(villan);
 						break;
@@ -150,7 +210,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				}
 			}
 		}
-	return ret;
+		return ret;
 	}
 
 
@@ -163,7 +223,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				MissionList[i-1] = missioncls;
 				MissionList[i-1].AppliedHero = hc;
 
-				IEnumerator misRoutine = MissionProgless(hc, MissionList[i-1]);
+				IEnumerator misRoutine = MissionProgless(MissionList[i-1]);
 				StartCoroutine(misRoutine);
 				routineList.Add(misRoutine);
 				Debug.Log("StartMissionClass" + "[" + i.ToString() + "]");
@@ -176,76 +236,33 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	}
 
 
-	private IEnumerator MissionProgless (HeroStatusClass hc, MissionClass missioncls) {
+	private IEnumerator MissionProgless (MissionClass mc) {
 
-		Debug.Log("villian list : " + missioncls.VillainList.Count);
-		//hc.Health = 300;
-		//hc.Atk = 20f;
-		//hc.Def = 0f;
-		missioncls.ActiveFlg = true;
-		missioncls.Success = false;
-		missioncls.RemainVillains = missioncls.VillainList.Count;
+		mc.ActiveFlg = true;
+		mc.Success = false;
 
-		for(int i = 0; i <= missioncls.VillainList.Count - 1; i++){
-			yield return new WaitForSeconds(1);
-			if(hc.Health > 0){
-				while(missioncls.VillainList[i].Health > 0 && hc.Health > 0){
-					int a = UnityEngine.Random.Range(0,2);
-					string log = Attack(a, hc, missioncls.VillainList[i]);
-					PrintBattlelog(missioncls, log);
-					yield return new WaitForSeconds(1);
-				}
-				if(hc.Health > 0){
-					missioncls.RemainVillains = missioncls.VillainList.Count - (i + 1);
-					Debug.Log("remainvillain : " + missioncls.RemainVillains);
-					if(missioncls.VillainList.Count - (i + 1) != 0){
-						PrintBattlelog(missioncls, "!! LEFT " + (missioncls.VillainList.Count - (i + 1)).ToString() + "VILLANS !!");
-					} else {
-						missioncls.RemainVillains = 0;
-						PrintBattlelog(missioncls, "!! ALL VILLAINS REMOVED !!");
-						missioncls.Success = true;
-					}
-				} else {
-					PrintBattlelog(missioncls, "!! HERO DOWN !!");
-				}
+		List<MissionPhase> phaseList = mc.PhaseList;
+
+		for(int i = 0; i <= (phaseList.Count - 1); i++){
+			//mc.PhaseHistory = new List<string>();
+			//mc.PhaseHistory = setPhaseList(mc.MissionNo);
+			Debug.Log(mc.PhaseHistory);
+			if(mc.ActiveFlg == true){
+				IEnumerator mission = phaseList[i].PhaseCoroutine(mc);
+				yield return StartCoroutine(mission);
 			}
+		
 		}
-		missioncls.ActiveFlg = false;
-	}
 
-	private string Attack(int a, HeroStatusClass hero, VillainStatusClass villain){
-		string ret = "";
-		if(a == 0){
-			int damageByVillain = (int)(villain.Atk * ((100 - hero.Def)/ 100) );
-			hero.Health = hero.Health - damageByVillain;
-			if(hero.Health > 0){
-				ret = "Villain attack! Hero's health remain : " + hero.Health.ToString();
-			} else {
-				ret = "Villain attack! Hero down!";
-			}
+		mc.ActiveFlg = false;
+
+		if(mc.Success == true){
+			Debug.Log("MissionComplete!");
 		} else {
-			int damageByVillain = (int)(hero.Atk * ((100 - villain.Def)/ 100) );
-			villain.Health = villain.Health - damageByVillain;
-			if(villain.Health > 0){
-				ret = "Hero attack! villain's health remain : " + villain.Health.ToString();
-			} else {
-				ret = "Hero attack! Villain down!";
-			}
+			Debug.Log("MissionFailture...");
 		}
-		return ret;
+
 	}
-
-	private void PrintBattlelog(MissionClass missioncls, string log){
-		if(log.Contains("Villain")){
-			log = log.Replace("Villain", "<color=#ff0000>Villain</color>");
-		} else if (log.Contains("Hero")) {
-			log = log.Replace("Hero", "<color=#0000ff>Hero</color>");
-		}
-		missioncls.CombatLog = missioncls.CombatLog + log + "\n";
-		Debug.Log(log);
-	}
-
-
 
 
 	public static void SaveList<T>(string key , List<T> value){

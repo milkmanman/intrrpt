@@ -20,20 +20,23 @@ public class RecruitDetail : MonoBehaviour {
 	}
 
 
-	public void Reflesh(ApplicantClass AC){
+	public void Reflesh(RecruitClass AC){
 		Name.text = AC.Name;
 		Msg.text = AC.Message;
-		float HpPercentage = (float)(AC.Heroism) / 100f;
+		float HpPercentage = (float)(AC.Status1) / 100f;
 		Heroism.fillAmount = HpPercentage;
 		float MvPercentage = (float)(AC.Motivation) / 100f;
 		Motivation.fillAmount = MvPercentage;
 		Personality.text = "- " + AC.Personality1 + "\n- " + AC.Personality2;
 
-
 	}
 
 	public void OnConfirmButtonClick(){
-		HeroManager.Instance.addHero(HeroManager.Instance.HoldApplicant);
+		if(RecruitManager.Instance.HoldRecruit.Type == "Hero"){
+			HeroManager.Instance.addHero(RecruitManager.Instance.HoldRecruit);
+		} else if(RecruitManager.Instance.HoldRecruit.Type == "Develop"){
+			FacilityManager.Instance.addDevelopMember(RecruitManager.Instance.HoldRecruit);
+		}
 	}
 
 	public void OnBackButtonClick(){

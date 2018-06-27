@@ -5,10 +5,8 @@ using UnityEngine.UI;
 
 public class CityMissionUI : MonoBehaviour {
 
-	public Text battleLog;
-	private Text remainEnemies;
+	public Text missionLog;
 	private Text HeroName;
-	private int re;
 	public GameObject MissionInfo;
 	private int maxHealth;
 	private Image HPBar;
@@ -21,7 +19,6 @@ public class CityMissionUI : MonoBehaviour {
 			Debug.Log("MissionList[0]" + " - isnotnull");
 			mc = MissionManager.Instance.MissionList[0];
 			//mc = MissionManager.Instance.slot1;
-			remainEnemies = MissionInfo.transform.Find("RemainEnemies").GetComponent<Text>();
 			HeroName = MissionInfo.transform.Find("HeroName").GetComponent<Text>();
 			HPBar = MissionInfo.transform.Find("HP/Bar").GetComponent<Image>();
 			HPBar.fillAmount = 1.0f;
@@ -43,24 +40,17 @@ public class CityMissionUI : MonoBehaviour {
 		this.gameObject.SetActive(true);
 		this.transform.Find("MissionInfo").gameObject.SetActive(true);
 		this.transform.Find("MissionResult").gameObject.SetActive(false);
-		remainEnemies = MissionInfo.transform.Find("RemainEnemies").GetComponent<Text>();
 		Debug.Log(setmc.AppliedHero.Name + " : setmc");
 		HeroName.text = setmc.AppliedHero.Name;
-		battleLog.text = setmc.CombatLog;
-		re = setmc.RemainVillains;
-		remainEnemies.text = "Remain Enemies : " + re.ToString();
+		missionLog.text = setmc.MissionLog;
 		IEnumerator routine = RefleshDisplay(setmc);
 		StartCoroutine(routine);
 	}
 
 	IEnumerator RefleshDisplay (MissionClass mctest) {
 		while(mctest.ActiveFlg == true){
-			battleLog.text = mctest.CombatLog;
+			missionLog.text = mctest.MissionLog;
 			HPBar.fillAmount = (float)mctest.AppliedHero.Health / (float)mctest.AppliedHero.MaxHealth;
-			if(re != MissionManager.Instance.MissionList[0].RemainVillains){
-				re = MissionManager.Instance.MissionList[0].RemainVillains;
-				remainEnemies.text = "Remain Enemies : " + re.ToString();
-			}
 			yield return new WaitForSeconds(1);
 		}
 		DisplayButton();
@@ -82,7 +72,6 @@ public class CityMissionUI : MonoBehaviour {
 		}
 		Result.transform.Find("Result").gameObject.GetComponent<Text>().text = resultmsg;
 		Result.transform.Find("HP/Bar").gameObject.GetComponent<Image>().fillAmount = (float)mc.AppliedHero.Health / (float)mc.AppliedHero.MaxHealth;
-		Result.transform.Find("Enemy").gameObject.GetComponent<Text>().text =  "Down Enemy Number : " + mc.VillainList.Count.ToString();
 		Result.transform.Find("Reward/Reward1").gameObject.GetComponent<Text>().text =  mc.Reward1 + " : " + mc.Reward1val.ToString();
 		if(mc.Reward2 != null){
 			Result.transform.Find("Reward/Reward2").gameObject.GetComponent<Text>().text =  mc.Reward2 + " : " + mc.Reward2val.ToString();

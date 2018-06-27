@@ -112,6 +112,8 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 
 	}
 
+
+
 	public List<FacilityClass> SetDevedFacilityList(Dictionary<string, int> dic){
 		List<FacilityClass> retList = new List<FacilityClass>();
 
@@ -158,10 +160,6 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	}
 
 
-
-
-
-
 	private void InstantiateFacility(){
 		var go = new GameObject();
 		go.name = "Drone1";
@@ -178,6 +176,18 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 			test_prefab.name = "Drone_" + i.ToString();
 			test_prefab.transform.SetParent(go.transform);
 		}
+	}
+
+	public void addDevelopMember (RecruitClass test) {
+		DevelopMemberClass DevMember = test.CloneDevelop();
+		if(DevelopMembers.Count <= 5){
+			DevelopMembers.Add(DevMember);
+			Debug.Log("Adding Hero is Success");
+
+		} else {
+			Debug.LogError("Error : Over Capacity of heroes");
+		}
+		SaveDevelopMembers ();
 	}
 
 	List<DevelopMemberClass> LoadDevelopMembers () {

@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class RecruitNode : MonoBehaviour {
 
-	public ApplicantClass Hero;
+	public RecruitClass Hero;
 
 	public Text RecruitName;
-	public Image Heroism;
+	public Text Status1Name;
+	public Image Status1;
 	public Image Motivation;
 	public Button SelectButton;
 
@@ -23,8 +24,8 @@ public class RecruitNode : MonoBehaviour {
 	public void RefleshRecruit(){
 		RecruitName.text = Hero.Name;
 
-		float HpPercentage = (float)(Hero.Heroism) / 100f;
-		Heroism.fillAmount = HpPercentage;
+		float Status1Percentage = (float)(Hero.Status1) / 100f;
+		Status1.fillAmount = Status1Percentage;
 
 		float MvPercentage = (float)(Hero.Motivation) / 100f;
 		Motivation.fillAmount = MvPercentage;

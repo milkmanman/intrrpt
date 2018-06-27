@@ -15,25 +15,15 @@ public class MissionClass {
 	private string description;
 	private bool activeflg;
 	private bool success;
-	private int time;
+	private List<MissionPhase> phaseList;
+	private List<string> phaseHistory;
 
 	private string villainName;
 	private string villainDescription;
 	private int villainInfo;
-
-	private List<VillainStatusClass> villainList;
-	private string combatLog;
-	private int remainVillains;
 	private HeroStatusClass appliedHero;
 	private string missionLog;
 
-
-
-	//for Search and Destroy
-	private bool modded;
-	private int Phase;
-	private List<int> route;
-	private bool finished;
 
 	public int MissionNo{
 		get {return missionNo;}
@@ -90,31 +80,6 @@ public class MissionClass {
 		set {success = value;}
 	}
 
-	public int Time{
-		get {return time;}
-		set {time = value;}
-	}
-
-	public List<VillainStatusClass> VillainList{
-		get {return villainList;}
-		set {villainList = value;}
-	}
-
-	public string CombatLog{
-		get {return combatLog;}
-		set {combatLog = value;}
-	}
-
-	public List<int> Route{
-		get {return route;}
-		set {route = value;}
-	}
-
-	public bool Finished{
-		get {return finished;}
-		set {finished = value;}
-	}
-
 	public string VillainName{
 		get {return villainName;}
 		set {villainName = value;}
@@ -130,9 +95,14 @@ public class MissionClass {
 		set {villainInfo = value;}
 	}
 
-	public int RemainVillains{
-		get {return remainVillains;}
-		set {remainVillains = value;}
+	public List<MissionPhase> PhaseList{
+		get {return phaseList;}
+		set {phaseList = value;}
+	}
+
+	public List<string> PhaseHistory{
+		get {return phaseHistory;}
+		set {phaseHistory = value;}
 	}
 
 	public HeroStatusClass AppliedHero{
