@@ -8,8 +8,10 @@ public class RecruitUI : MonoBehaviour {
 
 	public GameObject HeroHiringField;
 	public GameObject DevelopHiringField;
+	public GameObject MedicHiringField;
 	public GameObject HeroRecruitField;
 	public GameObject DevelopRecruitField;
+	public GameObject MedicRecruitField;
 	public GameObject Detail;
 	public RectTransform RecruitNodePrefab;
 
@@ -19,6 +21,8 @@ public class RecruitUI : MonoBehaviour {
 
 		RefreshRecruits("Hero");
 		RefreshRecruits("Develop");
+		RefreshRecruits("Medic");
+
 
 	}
 
@@ -30,6 +34,8 @@ public class RecruitUI : MonoBehaviour {
 			field = HeroRecruitField;
 		} else if(type == "Develop"){
 			field = DevelopRecruitField;
+		} else if(type == "Medic"){
+			field = MedicRecruitField;
 		}
 
 		RecruitManager.Instance.RefleshRecruitList(type);
@@ -45,6 +51,8 @@ public class RecruitUI : MonoBehaviour {
 					test = RecruitManager.Instance.RecruitHeroList[i-1];
 				} else if(type == "Develop"){
 					test = RecruitManager.Instance.RecruitDevelopList[i-1];
+				} else if(type == "Medic"){
+					test = RecruitManager.Instance.RecruitMedicList[i-1];
 				}
 				item.GetComponent<RecruitNode>().Hero = test;
 				item.GetComponent<RecruitNode>().RefleshRecruit();
@@ -71,9 +79,15 @@ public class RecruitUI : MonoBehaviour {
 		if(type == "Hero"){
 			HeroHiringField.SetActive(true);
 			DevelopHiringField.SetActive(false);
+			MedicHiringField.SetActive(false);
 		} else if(type == "Develop"){
 			DevelopHiringField.SetActive(true);
 			HeroHiringField.SetActive(false);
+			MedicHiringField.SetActive(false);
+		} else if(type == "Medic"){
+			DevelopHiringField.SetActive(false);
+			HeroHiringField.SetActive(false);
+			MedicHiringField.SetActive(true);
 		}
 	}
 

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class MedicClass {
 
+
+	public HeroStatusClass hsc;
 	public bool ActiveFlag = false;
-	public int Time = 0;
+	public int Time = 10;
 
 }

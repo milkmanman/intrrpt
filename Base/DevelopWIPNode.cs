@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class DevelopWIPNode : MonoBehaviour {
 
 	public Text Name;
@@ -11,6 +10,8 @@ public class DevelopWIPNode : MonoBehaviour {
 	public Image TimeBar;
 
 	public void Refresh(FacilityClass fc){
+		Debug.Log("dev time : " + fc.Time.ToString());
+
 		Name.text = fc.Name;
 		Time.text = fc.RemainTime.ToString();
 		float DevelopProgress = ( (float)(fc.Time) - (float)(fc.RemainTime) ) / (float)(fc.Time);

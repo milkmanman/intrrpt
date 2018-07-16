@@ -32,11 +32,14 @@ public class RecruitDetail : MonoBehaviour {
 	}
 
 	public void OnConfirmButtonClick(){
-		if(RecruitManager.Instance.HoldRecruit.Type == "Hero"){
+		RecruitManager.Instance.AddMember();
+		/*if(RecruitManager.Instance.HoldRecruit.Type == "Hero"){
 			HeroManager.Instance.addHero(RecruitManager.Instance.HoldRecruit);
 		} else if(RecruitManager.Instance.HoldRecruit.Type == "Develop"){
 			FacilityManager.Instance.addDevelopMember(RecruitManager.Instance.HoldRecruit);
-		}
+		} else if(RecruitManager.Instance.HoldRecruit.Type == "Medic"){
+			MedicManager.Instance.addMedicMember(RecruitManager.Instance.HoldRecruit);
+		}*/
 	}
 
 	public void OnBackButtonClick(){

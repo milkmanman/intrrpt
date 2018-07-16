@@ -17,7 +17,7 @@ public class testInstantiate : MonoBehaviour {
 
 	void InstantiateInfobar(){
 		for(int i = 1; i <= MissionManager.Instance.MissionList.Count; i++){
-			if(MissionManager.Instance.MissionList[i] != null){
+			if(MissionManager.Instance.MissionList[i-1] != null){
 				GameObject heroObj = Instantiate(prefabMIB, new Vector3(i * (-100), 40, 0), Quaternion.identity);
 				heroObj.GetComponent<MissionInfoBar>().mc = MissionManager.Instance.MissionList[0];
 				heroObj.GetComponent<MissionInfoBar>().MissionUI = GameObject.Find("GUI").transform.Find("MissionUI").gameObject;

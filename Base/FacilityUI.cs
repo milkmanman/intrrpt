@@ -13,6 +13,7 @@ public class FacilityUI : MonoBehaviour {
 	public TextAsset FacilityDatabase;
 
 	public Text GranadeCount;
+	public Text Productivity;
 
 	public List<GameObject> FacilityObject;
 
@@ -34,9 +35,7 @@ public class FacilityUI : MonoBehaviour {
 
 	void Start () {
 
-			RefreshGranade();
-			//string[,] arr = FacilityManager.Instance.facilityarray();
-			//int length = arr.GetLength(0);
+
 			List<FacilityClass> FacilityList = new List<FacilityClass>();
 			FacilityList = FacilityManager.Instance.FacilityList;
 			List<FacilityClass> DevedFacilityList = new List<FacilityClass>();
@@ -60,6 +59,13 @@ public class FacilityUI : MonoBehaviour {
 			}*/
 
 			RefreshStuff();
+			RefreshProductivity();
+			RefreshGranade();
+	}
+
+	void OnEnable () {
+		//RefreshGranade();
+		RefreshStuff();
 	}
 
 	private void InstantiateFacilityNode(List<FacilityClass> FacilityList, GameObject parent){
@@ -89,7 +95,6 @@ public class FacilityUI : MonoBehaviour {
 		FacilityManager.Instance.StartDevelop(fc, node);
 
 		InstantiateFacility();
-		Debug.Log("agreebutton values : " + selectedxmldir);
 
 	}
 
@@ -141,13 +146,18 @@ public class FacilityUI : MonoBehaviour {
 	}
 
 	private void RefreshStuff(){
+		 foreach (Transform child in MemberNodeField.transform) {
+     		GameObject.Destroy(child.gameObject);
+ 		}
+
 		List<DevelopMemberClass> MemberList =  FacilityManager.Instance.DevelopMembers;
 		for(int i = 1; i <= MemberList.Count; i++){
 			var item = GameObject.Instantiate(MemberNodePrefab) as RectTransform;
 			item.SetParent(MemberNodeField.transform, false);
 			DevelopMemberClass test =  new DevelopMemberClass();
 			test = MemberList[i-1];
-			item.GetComponent<DevelopMemberNode>().Name.text = test.Name;
+			item.GetComponent<DevelopMemberNode>().dev = test;
+			item.GetComponent<DevelopMemberNode>().RefleshNode();
 			//item.GetComponent<RecruitNode>().RefleshRecruit();
 			//Button button = item.GetComponent<RecruitNode>().SelectButton;
 			//RecruitNode node = item.GetComponent<RecruitNode>();
@@ -164,9 +174,12 @@ public class FacilityUI : MonoBehaviour {
 	}
 
 	public void RefreshGranade(){
-		GranadeCount.text = "x " + FacilityManager.Instance.FlashGranadeCount.ToString();
-		Debug.Log("xxx xxx xxx :" + FacilityManager.Instance.FlashGranadeCount.ToString());
+		GranadeCount.text = "x " + FacilityManager.Instance.BuffSlot["flashGranade"].ToString();
+
 	}
 
+	private void RefreshProductivity(){
+		Productivity.text = FacilityManager.Instance.Productivity.ToString();
+	}
 
 }

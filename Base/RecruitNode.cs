@@ -12,6 +12,8 @@ public class RecruitNode : MonoBehaviour {
 	public Image Status1;
 	public Image Motivation;
 	public Button SelectButton;
+	public Text Param1Name;
+	public Text Param2Name;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +24,26 @@ public class RecruitNode : MonoBehaviour {
 	}
 
 	public void RefleshRecruit(){
+
+		switch(Hero.Type){
+			case "Hero" :
+				Param1Name.text = "Heroism";
+				Param2Name.text = "Motivation";
+				break;
+			case "Develop" :
+				Param1Name.text = "Dev skill";
+				Param2Name.text = "Motivation";
+				break;
+			case "Medic" :
+				Param1Name.text = "Med skill";
+				Param2Name.text = "Motivation";
+				break;
+			default :
+				break;
+		}
+
+
+
 		RecruitName.text = Hero.Name;
 
 		float Status1Percentage = (float)(Hero.Status1) / 100f;

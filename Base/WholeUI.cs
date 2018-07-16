@@ -12,15 +12,19 @@ public class WholeUI : MonoBehaviour {
 	public Text Tailor;
 
 	public Text HeroesField;
+	public Text DevsField;
+
 
 	void Start () {
 		RefreshResource();
 		RefreshHeroes();
+		RefreshDev();
 	}
 
 	void OnEnable () {
 		RefreshResource();
 		RefreshHeroes();
+		RefreshDev();
 	}
 
 	public void RefreshResource () {
@@ -44,6 +48,20 @@ public class WholeUI : MonoBehaviour {
 		if(listhero.Count >= 6) test += "\n" + listhero[5];
 
 		HeroesField.text = test;
+
+	}
+
+		public void RefreshDev(){
+
+		List<string> listhero = FacilityManager.Instance.wholeUI();
+		string test = listhero[0];
+		if(listhero.Count >= 2) test += "\n" + listhero[1];
+		if(listhero.Count >= 3) test += "\n" + listhero[2];
+		if(listhero.Count >= 4) test += "\n" + listhero[3];
+		if(listhero.Count >= 5) test += "\n" + listhero[4];
+		if(listhero.Count >= 6) test += "\n" + listhero[5];
+
+		DevsField.text = test;
 
 	}
 

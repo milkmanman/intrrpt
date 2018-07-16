@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DevelopMemberNode : MonoBehaviour {
+public class MedicMemberNode : MonoBehaviour {
 
-	public DevelopMemberClass dev;
+	public MedicMemberClass med;
 
 	public Text Name;
 	public Image LvBar;
@@ -13,14 +13,13 @@ public class DevelopMemberNode : MonoBehaviour {
 
 	public void RefleshNode(){
 
-		Name.text = dev.Name;
+		Name.text = med.Name;
 
-		float LevelPercentage = (float)(dev.SkillLv) / 100f;
+		float LevelPercentage = (float)(med.SkillLv) / 100f;
 		LvBar.fillAmount = LevelPercentage;
 
-		float MvPercentage = (float)(dev.Motivation) / 100f;
+		float MvPercentage = (float)(med.Motivation) / 100f;
 		MotivBar.fillAmount = MvPercentage;
-
 	}
 
 }

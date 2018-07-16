@@ -13,7 +13,7 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	public TextAsset FacilityDatabase;
 	public XmlDocument xmlDoc;
 
-	public int FlashGranadeCount;
+	//public int FlashGranadeCount;
 
 	public List<DevelopMemberClass> DevelopMembers;
 	public List<FacilityClass> DevedFacilityList;
@@ -21,39 +21,17 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	public List<Facility> FacilityObject;
 	public List<IEnumerator> routineList;
 
-	public int FlashGranade;
+	public Dictionary<string, int> FacilityPhases;
+	public Dictionary<string, bool> EnableBuff;
+	public Dictionary<string, int> BuffSlot;
 
-	public int DronePhase{
-		get{return dronePhase;}
-		set{dronePhase = value;}
-	}
-
-	public int JumpingDronePhase{
-		get{return jumpingDronePhase;}
-		set{jumpingDronePhase = value;}
-	}
-
-	public string[,] facilityarray() {
-		string[,] arr = new string[2, 2];
-		arr[0, 0] = "drone";
-		arr[0, 1] = DronePhase.ToString();
-		arr[1, 0] = "jumpingdrone";
-		arr[1, 1] = JumpingDronePhase.ToString();
-
-		return arr;
-	}
-
-	public Dictionary<string, int> SetDevelopPhase(){
-		Dictionary<string, int> returnDic = new Dictionary<string, int>();
-		returnDic.Add("drone" , DronePhase);
-		returnDic.Add("jumpingdrone" , JumpingDronePhase);
-		return returnDic;
-	}
+	//public int FlashGranade;
 
 
 	void Awake(){
 		//tmp setting
-		FlashGranadeCount = 0;
+		BuffSlot = new Dictionary<string, int>();
+		BuffSlot.Add("flashGranade", 0);
 
 		InstantiateFacility();
 		DevelopMembers = LoadDevelopMembers();
@@ -69,18 +47,16 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 		dmc.SkillLv = 10;
 		dmc.SkillExp = 1000;
 		dmc.Motivation = 100;
-		DevelopMembers.Add(dmc);
+		Debug.Log("productivity test : " + dmc.Productivity);*/
+		//DevelopMembers.Add(dmc);
+		//SaveDevelopMembers();
 
-		SaveDevelopMembers();*/
-		for(int i = 1; i <= DevelopMembers.Count; i++){
-			Debug.Log("Development Member" + "[" + i.ToString() + "]" +" : " + DevelopMembers[i-1].Name);
-		}
-
-		FacilityManager.Instance.DronePhase = 1;
-		FacilityManager.Instance.JumpingDronePhase = 0;
+		FacilityPhases = new Dictionary<string, int>();
+		FacilityPhases.Add("drone", 1);
+		FacilityPhases.Add("jumpingdrone", 0);
 
 		FacilityList = new List<FacilityClass>();
-		Dictionary<string, int> DevelopPhases = SetDevelopPhase();
+		Dictionary<string, int> DevelopPhases = FacilityPhases;
 		foreach(KeyValuePair<string, int> item in DevelopPhases) {
 			string tmpxmldir = "//" + item.Key.ToString() + "[@id=" + item.Value +"]";
 			string iconPass = item.Key.ToString() + "_" + item.Value;
@@ -88,8 +64,6 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 			fclty.IconPass = iconPass;
 			FacilityList.Add(fclty);
 		}
-
-		//DevedFacilityList = SetDevedFacilityList(DevelopPhases);
 
 		DevedFacilityList = new List<FacilityClass>();
 		foreach(KeyValuePair<string, int> item in DevelopPhases) {
@@ -100,15 +74,42 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 			DevedFacilityList.Add(fclty);
 		}
 
+		EnableBuff = new Dictionary<string, bool>();
+		EnableBuff.Add("flashGranade", true);
+		SetOnetimeBuffList(EnableBuff);
 
-		string onetime = "flashGranade"; //instant for flash granade
-		string onetimedir = "//" + onetime;
-		string iconPass_ = onetime;
-		FacilityClass onetimeFc = setFacilityClass(onetimedir);
-		onetimeFc.IconPass =  iconPass_;
-		FacilityList.Add(onetimeFc);
 
 		//drone[@id=0]
+
+		Debug.Log("Productivity : " + Productivity.ToString());
+
+	}
+
+	/*public void SetFacilityList(Dictionary<string, int> test){
+		foreach(KeyValuePair<string, bool> pair in test){
+			if(pair.Value == true){
+				Debug.Log (pair.Key + " " + pair.Value);
+				string onetime = pair.Key; //instant for flash granade
+				string onetimedir = "//" + onetime;
+				FacilityClass onetimeFc = setFacilityClass(onetimedir);
+				onetimeFc.IconPass =  onetime;
+				FacilityList.Add(onetimeFc);
+			}
+		}
+
+	}*/
+
+	public void SetOnetimeBuffList(Dictionary<string, bool> test){
+		foreach(KeyValuePair<string, bool> pair in test){
+			if(pair.Value == true){
+				Debug.Log (pair.Key + " " + pair.Value);
+				string onetime = pair.Key; //instant for flash granade
+				string onetimedir = "//" + onetime;
+				FacilityClass onetimeFc = setFacilityClass(onetimedir);
+				onetimeFc.IconPass =  onetime;
+				FacilityList.Add(onetimeFc);
+			}
+		}
 
 	}
 
@@ -194,12 +195,11 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 		DevelopMembers = new List<DevelopMemberClass>();
 		for(int i = 1; i <= 6; i++){
 			if(PlayerPrefs.GetString ("Develop" + i.ToString() + ".Name") != ""){
-				Debug.Log("ONCE");
 				DevelopMemberClass Member = new DevelopMemberClass();
 				Member.Name = PlayerPrefs.GetString ("Develop" + i.ToString() + ".Name");
 				Member.Gender = PlayerPrefs.GetString ("Develop" + i.ToString() + ".Gender");
 				Member.Skin = PlayerPrefs.GetInt ("Develop" + i.ToString() + ".Skin");
-				Member.SkillLv = PlayerPrefs.GetInt ("Develop" + i.ToString() + ".SkillLv");
+				//Member.SkillLv = PlayerPrefs.GetInt ("Develop" + i.ToString() + ".SkillLv");
 				Member.SkillExp = PlayerPrefs.GetInt ("Develop" + i.ToString() + ".SkillExp");
 				Member.Motivation = PlayerPrefs.GetInt ("Develop" + i.ToString() + ".Motivation");
 				DevelopMembers.Add(Member);
@@ -237,10 +237,11 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 
 
 	public void StartDevelop(FacilityClass fc, GameObject Node){
-				IEnumerator misRoutine = DevelopProgless(fc, Node);
+				FacilityClass cloneFc = new FacilityClass();
+				cloneFc = fc.Clone();
+				IEnumerator misRoutine = DevelopProgless(cloneFc, Node);
 				StartCoroutine(misRoutine);
 				routineList.Add(misRoutine);
-
 
 	}
 
@@ -259,7 +260,52 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	public void CompleteDevelopment (FacilityClass fc){
 		if(fc.Name == "Flash Granade"){
 			Debug.Log("Develop Flash Granade");
-			FlashGranadeCount++;
+			IncreaseBuff("flashGranade", 1);
+
+		}
+	}
+
+
+	public int Productivity {
+		get {
+			int total = 0;
+
+			for(int i = 1; i <= DevelopMembers.Count; i++){
+				total += DevelopMembers[i-1].Productivity;
+			}
+
+			return total;
+		} 
+
+	}
+
+
+	public List<string> wholeUI() {
+		List<string> rtnList = new List<string>();
+
+		foreach(DevelopMemberClass HSC in DevelopMembers){
+			rtnList.Add(HSC.Name + " - prdct : " + HSC.Productivity.ToString());
+		}
+
+		return rtnList;
+	}
+
+	public void IncreaseBuff(string type, int num){
+
+		List<string> keyList = new List<string>(BuffSlot.Keys);
+
+		foreach(string key in keyList){
+			if(key == type){
+			BuffSlot[key] += num;
+			}
+		}
+	}
+
+	public void DecreaseBuff(string type, int num){
+		foreach(KeyValuePair<string, int> item in BuffSlot) {
+			if(item.Key == type){
+				BuffSlot[item.Key] = item.Value - num;
+			}
 		}
 	}
 

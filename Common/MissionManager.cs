@@ -25,10 +25,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 		routineList = new List<IEnumerator>();
 		MissionList = new List<MissionClass>();
-		for(int i = 1; i <= 6; i++){
+		/*for(int i = 1; i <= 6; i++){
 			MissionClass emptyMC = new MissionClass();
 			MissionList.Add(emptyMC);
-		}
+		}*/
 
 		MissionDoc = new XmlDocument();
 		MissionDoc.LoadXml(MissionDB_Phase1.text);
@@ -218,19 +218,34 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 		int i = 1;
 
-		while(true){
-			if(MissionList[i-1].ActiveFlg == false || MissionList[i-1].ActiveFlg ==null){
-				MissionList[i-1] = missioncls;
-				MissionList[i-1].AppliedHero = hc;
+		if(MissionList.Count == 0){
+			missioncls.AppliedHero = hc;
+			MissionList.Add(missioncls);
 
-				IEnumerator misRoutine = MissionProgless(MissionList[i-1]);
-				StartCoroutine(misRoutine);
-				routineList.Add(misRoutine);
-				Debug.Log("StartMissionClass" + "[" + i.ToString() + "]");
-				break;
-				if(MissionList.Count == i) break;
+			//MissionList[i-1] = missioncls;
+			//MissionList[i-1].AppliedHero = hc;
+			//IEnumerator misRoutine = MissionProgless(MissionList[i-1]);
+			IEnumerator misRoutine = MissionProgless(missioncls);
+			StartCoroutine(misRoutine);
+			routineList.Add(misRoutine);
+			Debug.Log("StartMissionClass" + "[" + i.ToString() + "]");
+
+		} else {
+
+			while(true){
+				if(MissionList[i-1].ActiveFlg == false || MissionList[i-1].ActiveFlg ==null){
+					MissionList[i-1] = missioncls;
+					MissionList[i-1].AppliedHero = hc;
+
+					IEnumerator misRoutine = MissionProgless(MissionList[i-1]);
+					StartCoroutine(misRoutine);
+					routineList.Add(misRoutine);
+					Debug.Log("StartMissionClass" + "[" + i.ToString() + "]");
+					break;
+					if(MissionList.Count == i) break;
+				}
+				i++;
 			}
-			i++;
 		}
 
 	}
@@ -251,6 +266,9 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				IEnumerator mission = phaseList[i].PhaseCoroutine(mc);
 				yield return StartCoroutine(mission);
 			}
+
+			yield return new WaitForSeconds (1.0f);  
+
 		
 		}
 

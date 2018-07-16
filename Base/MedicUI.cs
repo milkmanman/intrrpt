@@ -10,9 +10,17 @@ public class MedicUI : MonoBehaviour {
 	public Text heroname;
 	public Text time;
 	public Text Mediclevel;
+	public Text Productivity;
 	public GameObject HealingField;
+	public GameObject MedicNodeField;
+	public RectTransform MedicNodePrefab;
+
+	public GameObject MemberNodeField;
+	public RectTransform MemberNodePrefab;
+
 
 	void Start() {
+		RefreshStuff();
 		RefleshMedicLevel();
 		SelectHero();
 	}
@@ -30,9 +38,14 @@ public class MedicUI : MonoBehaviour {
 	}
 
 	public void OnSubmitButton(){
+		MedicClass med = new MedicClass();
 		string Heroname = dropdown.transform.Find("Label").GetComponent<Text>().text;
-		HeroStatusClass hc = HeroManager.Instance.SearchByName(Heroname);
-		if(MedicManager.Instance.slot1.ActiveFlag == false){ // later, if in manager
+		med.hsc = HeroManager.Instance.SearchByName(Heroname);
+		GameObject node = InstantiateMedicNode(med);
+		MedicManager.Instance.SendMedic(med, node);
+		
+		
+		/*if(MedicManager.Instance.slot1.ActiveFlag == false){ // later, if in manager
 			MedicManager.Instance.SendMedic(hc, 100);
 			heroname.text = hc.Name;
 			StartCoroutine(MedicProgless());
@@ -41,9 +54,13 @@ public class MedicUI : MonoBehaviour {
 			HealingField.SetActive(true);
 			HealingField.transform.Find("Name").GetComponent<Text>().text = hc.Name;
 
-		}
+		}*/
+	}
 
-
+	private GameObject InstantiateMedicNode(MedicClass fc){
+		var item = GameObject.Instantiate(MedicNodePrefab) as RectTransform;
+		item.SetParent(MedicNodeField.transform, false);
+		return item.gameObject;
 	}
 
 
@@ -63,4 +80,29 @@ public class MedicUI : MonoBehaviour {
 			yield return new WaitForSeconds(1);
 		}
 	}
+
+	private void RefreshStuff(){
+		 foreach (Transform child in MemberNodeField.transform) {
+     		GameObject.Destroy(child.gameObject);
+ 		}
+
+		List<MedicMemberClass> MemberList =  MedicManager.Instance.MedicMembers;
+		for(int i = 1; i <= MemberList.Count; i++){
+			var item = GameObject.Instantiate(MemberNodePrefab) as RectTransform;
+			item.SetParent(MemberNodeField.transform, false);
+			MedicMemberClass test =  new MedicMemberClass();
+			test = MemberList[i-1];
+			item.GetComponent<MedicMemberNode>().med = test;
+			item.GetComponent<MedicMemberNode>().RefleshNode();
+			
+			//item.GetComponent<RecruitNode>().RefleshRecruit();
+			//Button button = item.GetComponent<RecruitNode>().SelectButton;
+			//RecruitNode node = item.GetComponent<RecruitNode>();
+			//button.onClick.AddListener(delegate{HeroManager.Instance.HoldApplicant = test;});
+			//button.onClick.AddListener(delegate{ShowApplicantDetail();});
+		}
+		Productivity.text = MedicManager.Instance.Productivity.ToString();
+	}
+
+
 }

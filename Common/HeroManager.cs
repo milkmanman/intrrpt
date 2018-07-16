@@ -124,8 +124,6 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 			rtnList.Add(HSC.Name + " - Status : " + convertStatus(HSC.Status));
 		}
 
-		Debug.Log("listcount: " + rtnList.Count);
-
 		return rtnList;
 	}
 

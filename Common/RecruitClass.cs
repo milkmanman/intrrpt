@@ -6,6 +6,7 @@ public class RecruitClass {
 
 	private string type;
 	private string name;
+	private string gender;
 	private string message;
 	private string personality1;
 	private string personality2;
@@ -20,6 +21,11 @@ public class RecruitClass {
 	public string Name{
 		get {return name;}
 		set {name = value;}
+	}
+
+	public string Gender{
+		get {return gender;}
+		set {gender = value;}
 	}
 
 	public string Message{
@@ -60,6 +66,15 @@ public class RecruitClass {
 		retHero.Motivation = Motivation;
 		return retHero;
 	}
+
+	public MedicMemberClass CloneMedic(){
+		MedicMemberClass retMember = new MedicMemberClass();
+		retMember.Name = Name;
+		retMember.Motivation = Motivation;
+		retMember.SkillExp = Status1;
+		return retMember;
+	}
+
 
 
 }

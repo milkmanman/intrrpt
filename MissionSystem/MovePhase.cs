@@ -25,7 +25,9 @@ public class MovePhase : MissionPhase {
 			yield return new WaitForSeconds (0.1f);  
 			count++;
 		}
-		
+
+		yield return new WaitForSeconds (1.0f);  
+
 		PrintLog(mc, "Arrieved at " + Destination + ", " + BridgeMsg);
 	}
 

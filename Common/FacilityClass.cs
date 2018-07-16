@@ -71,4 +71,20 @@ public class FacilityClass {
 		set {iconPass = value;}
 	}
 
+	public FacilityClass Clone(){
+		FacilityClass retFacility = new FacilityClass();
+		retFacility.Name = Name;
+		retFacility.Type = Type;
+		retFacility.Cost1Type = Cost1Type;
+		retFacility.Cost1Value = Cost1Value;
+		retFacility.Cost2Type = Cost2Type;
+		retFacility.Cost2Value = Cost2Value;
+		retFacility.Description = Description;
+		retFacility.Pos = Pos;
+		retFacility.Time = Time;
+		retFacility.RemainTime = RemainTime;
+		retFacility.IconPass = IconPass;
+		return retFacility;
+	}
+
 }

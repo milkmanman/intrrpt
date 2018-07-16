@@ -18,7 +18,6 @@ public class CityMissionUI : MonoBehaviour {
 		if(MissionManager.Instance.MissionList[0] != null){
 			Debug.Log("MissionList[0]" + " - isnotnull");
 			mc = MissionManager.Instance.MissionList[0];
-			//mc = MissionManager.Instance.slot1;
 			HeroName = MissionInfo.transform.Find("HeroName").GetComponent<Text>();
 			HPBar = MissionInfo.transform.Find("HP/Bar").GetComponent<Image>();
 			HPBar.fillAmount = 1.0f;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DevelopMemberClass {
+public class MedicMemberClass {
 
 	private string name;
 	private string gender;
@@ -44,5 +44,4 @@ public class DevelopMemberClass {
 	public int Productivity{
 		get {return motivation * SkillLv * 10;}
 	}
-
 }

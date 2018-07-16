@@ -6,6 +6,7 @@ public class RecruitManager : SingletonMonoBehaviourFast<RecruitManager> {
 
 	public List<RecruitClass> RecruitHeroList;
 	public List<RecruitClass> RecruitDevelopList;
+	public List<RecruitClass> RecruitMedicList;
 
 	public RecruitClass HoldRecruit;
 
@@ -16,14 +17,17 @@ public class RecruitManager : SingletonMonoBehaviourFast<RecruitManager> {
 			RecruitHeroList = new List<RecruitClass>();
 		} else if(type == "Develop") {
 			RecruitDevelopList = new List<RecruitClass>();
+		} else if(type == "Medic"){
+			RecruitMedicList = new List<RecruitClass>();
 		}
-		var heroList = new List<string>(){"Peter", "Banner", "Gwen", "Tony", "Sheldon", "Takahiro", "Sayaka"};
-		List<int> a = RandomIntList(0,6,4);
+		var heroList = new List<string>(){"Peter", "Banner", "Gwen", "Tony", "Sheldon", "Takahiro", "Sayaka", "Hank", "Seth", "Jane"};
+		List<int> a = RandomIntList(0,9,4);
 		for(int i = 1; i <= 4; i++){
 
 			RecruitClass hero = new RecruitClass();
 			hero.Type = type;
 			hero.Name = heroList[ a[i-1] ];
+			hero.Gender = RandomGender();
 			hero.Status1 = Random.Range(15, 21)*5;
 			hero.Motivation = Random.Range(15, 21)*5;
 			hero.Message = "HERO? I JUST WANT TO BE IT. \nWANT TO DEFEND MYSELF FROM KICKASS.";
@@ -34,6 +38,8 @@ public class RecruitManager : SingletonMonoBehaviourFast<RecruitManager> {
 				RecruitHeroList.Add(hero);
 			} else if(type == "Develop"){
 				RecruitDevelopList.Add(hero);
+			} else if(type == "Medic"){
+				RecruitMedicList.Add(hero);
 			}
 		}
 	}
@@ -76,6 +82,31 @@ public class RecruitManager : SingletonMonoBehaviourFast<RecruitManager> {
 				numbers.RemoveAt(index);
 		}
 		return returnInt;
+	}
+
+	private string RandomGender(){
+		string ret;
+		int a = Random.Range(0, 1);
+		if(a == 0){
+			ret = "Male";
+		} else {
+			ret = "Female";
+		}
+		return ret;
+	}
+
+	public void AddMember(){
+		RecruitClass sendrec = HoldRecruit;
+		Debug.Log("RecruitManager : ADDMEMBER " + sendrec.Type);
+
+		if(sendrec.Type == "Hero"){
+			HeroManager.Instance.addHero(HoldRecruit);
+		} else if(sendrec.Type == "Develop"){
+			FacilityManager.Instance.addDevelopMember(HoldRecruit);
+		} else if(sendrec.Type == "Medic"){
+			MedicManager.Instance.addMedicMember(HoldRecruit);
+			Debug.Log("So... MedicMember");
+		}
 	}
 
 
