@@ -6,6 +6,8 @@ public class FacilityClass {
 
 	private string name;
 	private string type;
+	private string category;
+	private int phase;
 	private string cost1Type;
 	private int cost1Value;
 	private string cost2Type;
@@ -24,6 +26,16 @@ public class FacilityClass {
 	public string Type{
 		get {return type;}
 		set {type = value;}
+	}
+
+	public string Category{
+		get {return category;}
+		set {category = value;}
+	}
+
+	public int Phase{
+		get {return phase;}
+		set {phase = value;}
 	}
 
 	public string Cost1Type{
@@ -75,6 +87,8 @@ public class FacilityClass {
 		FacilityClass retFacility = new FacilityClass();
 		retFacility.Name = Name;
 		retFacility.Type = Type;
+		retFacility.Category = Category;
+		retFacility.Phase = Phase;
 		retFacility.Cost1Type = Cost1Type;
 		retFacility.Cost1Value = Cost1Value;
 		retFacility.Cost2Type = Cost2Type;
@@ -85,6 +99,12 @@ public class FacilityClass {
 		retFacility.RemainTime = RemainTime;
 		retFacility.IconPass = IconPass;
 		return retFacility;
+	}
+
+	public void SetTime(int prod){
+		float newtime_float = (float)(Time) - (float)(Time) / 3 * ((float)(prod) / 108000);
+		Time = (int)newtime_float;
+		RemainTime = (int)newtime_float;
 	}
 
 }

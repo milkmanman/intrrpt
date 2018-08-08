@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Xml;
-
-
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -12,8 +10,11 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 	public TextAsset MissionDB_Phase1;
 	public XmlDocument MissionDoc;
+	public TextAsset FreeRoamDB;
+	public XmlDocument FreeRoamDoc;
 	public TextAsset VillainInfoData;
 	public XmlDocument VillainDoc;
+	
 
 	public List<int> completedMission;
 	public List<int> selectableMission;
@@ -32,6 +33,8 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 		MissionDoc = new XmlDocument();
 		MissionDoc.LoadXml(MissionDB_Phase1.text);
+		FreeRoamDoc = new XmlDocument();
+		FreeRoamDoc.LoadXml(FreeRoamDB.text);
 		VillainDoc = new XmlDocument();
 		VillainDoc.LoadXml(VillainInfoData.text);
 
@@ -211,6 +214,113 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			}
 		}
 		return ret;
+	}
+
+	public void StartFreeRoam(HeroStatusClass hc){
+		Debug.Log("StartFreeRoam");
+		FreeRoamClass frc = new FreeRoamClass();
+		frc.AppliedHero = hc;
+		IEnumerator frmRoutine = FreeroamProgress(frc);
+		StartCoroutine(frmRoutine);
+
+	}
+
+	private IEnumerator FreeroamProgress (FreeRoamClass frc) {
+
+		//mc.ActiveFlg = true;
+		//mc.Success = false;
+		frc.PhaseList = new List<MissionPhase>();
+		List<MissionPhase> phaseList = frc.PhaseList;
+		int countPhases = 0;
+		while(true){
+			RestPhase pp = new RestPhase();
+			//PatrolPhase pp = new PatrolPhase();
+			phaseList.Add(pp);
+			IEnumerator patrol = phaseList[0].PhaseCoroutine(frc);
+			yield return StartCoroutine(patrol);
+			yield return new WaitForSeconds (1.0f);
+			phaseList = new List<MissionPhase>();
+
+			if(phaseList.Count == 0 || phaseList == null){
+				phaseList = SetFreeroamPhase();
+				yield return new WaitForSeconds (1.0f);
+
+				for(int i = 0; i <= (phaseList.Count -1); i++){
+					IEnumerator mission = phaseList[i].PhaseCoroutine(frc);
+					yield return StartCoroutine(mission);
+					yield return new WaitForSeconds (1.0f);
+					countPhases++;
+					Debug.Log("phases" + countPhases);
+				}
+				phaseList = new List<MissionPhase>();
+			}
+		}
+		//frc.ActiveFlg = false;
+	}
+
+	private List<MissionPhase> SetFreeroamPhase(){
+
+		List<MissionPhase> rtnList = new List<MissionPhase>();
+
+		int missionCount = FreeRoamDoc.SelectSingleNode("missions").ChildNodes.Count;
+		int randomCount = UnityEngine.Random.Range(1, missionCount);
+
+		XmlNode node0 = FreeRoamDoc.SelectSingleNode(@"//mission[@id=" + randomCount + "]/phases");
+		//XmlNode phase1 = node0.SelectSingleNode("./phase[@id=1]/type");
+		for(int i = 1; i <= node0.ChildNodes.Count; i++){
+			XmlNode TypeNode = node0.SelectSingleNode("./phase[@id=" + i + "]/type");
+			switch(TypeNode.InnerText){
+				case "Move" : 
+					MovePhase move = new MovePhase();
+					XmlNode mv1 = node0.SelectSingleNode("./phase[@id=" + i + "]/destination");
+					XmlNode mv2 = node0.SelectSingleNode("./phase[@id=" + i + "]/bridgemsg");
+					move.Destination = mv1.InnerText;
+					move.BridgeMsg = mv2.InnerText;
+					rtnList.Add(move);
+
+					break;
+
+				case "Talk" :
+					TalkPhase talk = new TalkPhase();
+					List<Line> lines = new List<Line>();
+					XmlNode lns = node0.SelectSingleNode("./phase[@id=" + i + "]/lines");
+					for(int ino = 1; ino <= lns.ChildNodes.Count; ino++){
+
+						Line lineclass = new Line();
+						XmlNode tlk1 = node0.SelectSingleNode("./phase[@id=" + i + "]/lines/line[@id=" + ino + "]/who");
+						XmlNode tlk2 = node0.SelectSingleNode("./phase[@id=" + i + "]/lines/line[@id=" + ino + "]/what");
+						lineclass.who = tlk1.InnerText;
+						lineclass.what = tlk2.InnerText;
+						lines.Add(lineclass);
+					}
+					talk.lines = lines;
+					rtnList.Add(talk);
+
+					break;
+
+				case "Battle" :
+					BattlePhase battle = new BattlePhase();
+					List<VillainStatusClass> villainList = new List<VillainStatusClass>();
+					XmlNode vln = node0.SelectSingleNode("./phase[@id=" + i + "]/villains");
+					Debug.Log("villainnode : " + vln.InnerText);
+					Dictionary<string, int> villaindir = InstantiateVillainDic(vln);
+					battle.villainList = AddVillanByDict(villaindir);
+
+								//XmlNode node8 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/villains");
+								//Dictionary<string, int> villaindir = InstantiateVillainDic(node8);
+								//MisInfo.VillainList = AddVillanByDict(villaindir);
+					
+					rtnList.Add(battle);
+
+					break;
+
+				default :
+					break;
+
+			}
+
+		}
+		return rtnList;
 	}
 
 

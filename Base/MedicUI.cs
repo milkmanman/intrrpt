@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MedicUI : MonoBehaviour {
 
+	public UIActivator UiActive;
+
 	public Dropdown dropdown;
 	Button SubmitButton;
 	public Text heroname;
@@ -20,12 +22,13 @@ public class MedicUI : MonoBehaviour {
 
 
 	void Start() {
+		CanvasOnEnabled();
+		UiActive.OnEnabledMedicUI += CanvasOnEnabled;
+	}
+	
+	void CanvasOnEnabled () {
 		RefreshStuff();
 		RefleshMedicLevel();
-		SelectHero();
-	}
-
-	void OnEnable () {
 		SelectHero();
 	}
 

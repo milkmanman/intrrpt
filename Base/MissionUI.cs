@@ -10,6 +10,7 @@ public class MissionUI : MonoBehaviour {
 	public GameObject MissionDetailField;
 	public GameObject SelectHeroDropdown;
 	public GameObject SubmitButton;
+	public GameObject FreeroamButton;
 	public GameObject HoldMissionNode;
 
 	private string SelectedHeroName;
@@ -123,6 +124,13 @@ public class MissionUI : MonoBehaviour {
 		HeroStatusClass selectedhero = HeroManager.Instance.SearchByName(SelectedHeroName);
 		HoldMissionNode.GetComponent<MissionNode>().SetHero(selectedhero);
 		HoldMissionNode.GetComponent<MissionNode>().StartMission();
+	}
+
+	public void FreeRoamButtonOnClicked() {
+		HeroStatusClass selectedhero = HeroManager.Instance.SearchByName(SelectedHeroName);
+		MissionManager.Instance.StartFreeRoam(selectedhero);
+		//HoldMissionNode.GetComponent<MissionNode>().SetHero(selectedhero);
+		//HoldMissionNode.GetComponent<MissionNode>().StartMission();
 	}
 
 

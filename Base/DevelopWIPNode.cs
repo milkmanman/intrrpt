@@ -27,6 +27,7 @@ public class DevelopWIPNode : MonoBehaviour {
 			completeBtn.onClick.AddListener(delegate{GameObject.Find("GUI/FacilityUI").GetComponent<FacilityUI>().RefreshGranade();});
 			completeBtn.onClick.AddListener(delegate{StartCoroutine("SelfDestroy");});
 		}
+		GeneralHelper.Instance.NoticeUI("Develop complete", fc.Name + " is just now developed");
 
 	}
 

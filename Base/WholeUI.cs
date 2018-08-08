@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class WholeUI : MonoBehaviour {
 
+	public UIActivator UiActive;
+
 	public Text Cash;
 	public Text Intel;
 	public Text Tech;
@@ -16,12 +18,11 @@ public class WholeUI : MonoBehaviour {
 
 
 	void Start () {
-		RefreshResource();
-		RefreshHeroes();
-		RefreshDev();
+		CanvasOnEnabled();
+		UiActive.OnEnabledWholeUI += CanvasOnEnabled;
 	}
 
-	void OnEnable () {
+	void CanvasOnEnabled () {
 		RefreshResource();
 		RefreshHeroes();
 		RefreshDev();

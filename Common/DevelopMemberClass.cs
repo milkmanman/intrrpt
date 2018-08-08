@@ -27,8 +27,8 @@ public class DevelopMemberClass {
 	}
 
 	public int SkillLv{
-		get {return (skillExp / 1000) + 1;}
-		set {skillExp = (value * 1000) + 1;}
+		get {return (skillExp / 100) + 1;}
+		set {skillExp = (value * 100) + 1;}
 	}
 
 	public int SkillExp{
@@ -42,7 +42,13 @@ public class DevelopMemberClass {
 	}
 
 	public int Productivity{
-		get {return motivation * SkillLv * 10;}
+		//get {return motivation * SkillLv * 10;}
+		get {return ((motivation + 100) * SkillLv * 30) / 10;}
+
+	}
+
+	public void debug(){
+		Debug.Log("DevelopMember : " + name + ", exp-" + SkillExp + ", lv-" + SkillLv + ", motiv-" + Motivation + ", prdctvt-" + Productivity);
 	}
 
 }

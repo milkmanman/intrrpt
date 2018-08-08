@@ -15,7 +15,7 @@ public class DevelopMemberNode : MonoBehaviour {
 
 		Name.text = dev.Name;
 
-		float LevelPercentage = (float)(dev.SkillLv) / 100f;
+		float LevelPercentage = (float)(dev.SkillLv) / 30f;
 		LvBar.fillAmount = LevelPercentage;
 
 		float MvPercentage = (float)(dev.Motivation) / 100f;

@@ -6,6 +6,8 @@ using System.Xml;
 
 public class FacilityUI : MonoBehaviour {
 
+	public UIActivator UiActive;
+
 	public GameObject FacilityNodeField;
 	public GameObject DevedFacilityNodeField;
 	public GameObject FacilityDetailField;
@@ -40,7 +42,6 @@ public class FacilityUI : MonoBehaviour {
 			FacilityList = FacilityManager.Instance.FacilityList;
 			List<FacilityClass> DevedFacilityList = new List<FacilityClass>();
 			DevedFacilityList = FacilityManager.Instance.DevedFacilityList;
-			Debug.Log("counts counts counts : " + FacilityList.Count.ToString());
 
 			InstantiateFacilityNode(FacilityList, FacilityNodeField);
 			InstantiateFacilityNode(DevedFacilityList, DevedFacilityNodeField);
@@ -58,17 +59,37 @@ public class FacilityUI : MonoBehaviour {
 
 			}*/
 
-			RefreshStuff();
-			RefreshProductivity();
-			RefreshGranade();
+			CanvasOnEnabled();
+			UiActive.OnEnabledDevelopUI += CanvasOnEnabled;
+
 	}
 
-	void OnEnable () {
-		//RefreshGranade();
+	void CanvasOnEnabled () {
 		RefreshStuff();
+		RefreshProductivity();
+		RefreshGranade();
 	}
+
+	public void RefleshFacilityList(){
+
+		//List<FacilityClass> FacilityList = new List<FacilityClass>();
+		//FacilityList = FacilityManager.Instance.FacilityList;
+		//List<FacilityClass> DevedFacilityList = new List<FacilityClass>();
+		//DevedFacilityList = FacilityManager.Instance.DevedFacilityList;
+		FacilityManager.Instance.SetFacilityList();
+		InstantiateFacilityNode(FacilityManager.Instance.FacilityList, FacilityNodeField);
+		InstantiateFacilityNode(FacilityManager.Instance.DevedFacilityList, DevedFacilityNodeField);
+	}
+
 
 	private void InstantiateFacilityNode(List<FacilityClass> FacilityList, GameObject parent){
+
+		foreach (Transform child in parent.transform){
+			if(child.name.Contains("FacilityNode")){
+				GameObject.Destroy (child.gameObject);
+　			}
+		}
+
 		for(int i = 0; i<= FacilityList.Count - 1; i++){
 			var item = GameObject.Instantiate(prefab) as RectTransform;
 			FacilityClass fc = FacilityList[i];
@@ -131,8 +152,6 @@ public class FacilityUI : MonoBehaviour {
 		int nowResource = ResourceManager.Instance.Cash - fc.Cost1Value;
 		string resourceChanges = "Cash : " + ResourceManager.Instance.Cash.ToString() + " -> " + nowResource.ToString();
 		FacilityDetailField.transform.Find("Resource").GetComponent<Text>().text = resourceChanges;
-
-
 
 		Button button = FacilityDetailField.transform.Find("AgreeButton").GetComponent<Button>();
 		button.onClick.RemoveAllListeners();

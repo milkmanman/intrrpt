@@ -9,7 +9,6 @@ public class MedicNode : MonoBehaviour {
 	public Text Time;
 
 	public void Refresh(MedicClass mc){
-		Debug.Log("dev time : " + mc.Time.ToString());
 
 		Name.text = mc.hsc.Name;
 		Time.text = mc.Time.ToString();
