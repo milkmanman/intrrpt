@@ -6,7 +6,7 @@ public class MissionPhase {
 
 	public string Type = "N/A";
 
-	public virtual IEnumerator PhaseCoroutine(MissionClass mc) {  
+	public virtual IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
 		yield return new WaitForSeconds (0.5f);  
 		mc.MissionLog += "error in the phase!";
 

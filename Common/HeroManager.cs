@@ -15,6 +15,7 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 
 	public GameObject prefabHero;
 
+
 	void Awake () {
 		HeroList = new List<HeroStatusClass>();
 

@@ -12,12 +12,12 @@ public class BattlePhase : MissionPhase {
 
 
 
-	public override IEnumerator PhaseCoroutine (MissionClass missioncls) {
+	public override IEnumerator PhaseCoroutine (BaseMissionClass missioncls) {
 
 		Debug.Log("villian list : " + villainList.Count);
-		missioncls.AppliedHero.Health = 300;
-		missioncls.AppliedHero.Atk = 20f;
-		missioncls.AppliedHero.Def = 0f;
+		//missioncls.AppliedHero.Health = 300;
+		//missioncls.AppliedHero.Atk = 20f;
+		//missioncls.AppliedHero.Def = 0f;
 		RemainVillains = villainList.Count;
 
 		for(int i = 0; i <= villainList.Count - 1; i++){
@@ -43,7 +43,7 @@ public class BattlePhase : MissionPhase {
 				} else {
 					PrintLog(missioncls, "!! HERO DOWN !!");
 					missioncls.Success = false;
-					missioncls.ActiveFlg = false;
+					//missioncls.ActiveFlg = false; //instant for free-roam
 
 					yield break;
 				}
@@ -76,7 +76,7 @@ public class BattlePhase : MissionPhase {
 
 
 
-	private void PrintLog(MissionClass missioncls, string log){
+	private void PrintLog(BaseMissionClass missioncls, string log){
 		if(log.Contains("Villain")){
 			log = log.Replace("Villain", "<color=#ff0000>Villain</color>");
 		} else if (log.Contains("Hero")) {

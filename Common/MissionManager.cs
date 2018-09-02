@@ -14,18 +14,21 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	public XmlDocument FreeRoamDoc;
 	public TextAsset VillainInfoData;
 	public XmlDocument VillainDoc;
-	
+	public RestPhaseListSO RestPhaseDB;
 
 	public List<int> completedMission;
 	public List<int> selectableMission;
 	public List<MissionClass> selectableMissionClassList;
 	public List<IEnumerator> routineList;
 	public List<MissionClass> MissionList;
+	public List<FreeRoamClass> FreeRoamList;
+
 
 	void Awake () {
 
 		routineList = new List<IEnumerator>();
 		MissionList = new List<MissionClass>();
+		FreeRoamList = new List<FreeRoamClass>();
 		/*for(int i = 1; i <= 6; i++){
 			MissionClass emptyMC = new MissionClass();
 			MissionList.Add(emptyMC);
@@ -178,6 +181,25 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 	}
 
+	private void setFreeroamHoldResource(FreeRoamClass frc){
+		if ( frc.HoldResources.ContainsKey(frc.MissionResourceType) ){
+            frc.HoldResources[frc.MissionResourceType] = frc.MissionResourceValue + frc.HoldResources[frc.MissionResourceType];
+        } else {
+            frc.HoldResources.Add(frc.MissionResourceType, frc.MissionResourceValue);
+		}
+		DebugHoldResource(frc.HoldResources);
+	}
+
+	private void DebugHoldResource(Dictionary<string, int> test){
+		
+		string debugstr = "resource : ";
+
+		foreach(KeyValuePair<string, int> pair in test){
+			debugstr += pair.Key + " : " + pair.Value + "\n";
+		}
+		Debug.LogWarning(debugstr);
+	}
+
 	private Dictionary<string, int> InstantiateVillainDic(XmlNode villainsNode){
 		Dictionary<string, int> ret = new Dictionary<string, int> ();
 		foreach(XmlNode node in villainsNode.ChildNodes){
@@ -220,6 +242,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		Debug.Log("StartFreeRoam");
 		FreeRoamClass frc = new FreeRoamClass();
 		frc.AppliedHero = hc;
+		HeroManager.Instance.SetParamsByCostume(hc);
+		Debug.Log("HERO HEALTH : " + hc.Health);
+		//MissionList.Add(frc);
+		FreeRoamList.Add(frc);
 		IEnumerator frmRoutine = FreeroamProgress(frc);
 		StartCoroutine(frmRoutine);
 
@@ -227,12 +253,89 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 	private IEnumerator FreeroamProgress (FreeRoamClass frc) {
 
-		//mc.ActiveFlg = true;
+		frc.ActiveFlg = true;
+		frc.IsBackFlag = false;
 		//mc.Success = false;
 		frc.PhaseList = new List<MissionPhase>();
+		frc.HoldResources = new Dictionary<string, int>();
 		List<MissionPhase> phaseList = frc.PhaseList;
 		int countPhases = 0;
-		while(true){
+		int countPatrol = 0;
+		frc.PhaseListHistory = new List<MissionPhase>();
+		while(frc.ActiveFlg == true){
+			phaseList.Clear();
+
+
+			if(frc.IsBackFlag == true){
+				BackPhase bp = new BackPhase();
+				//rp = setRestPhase();
+				phaseList.Add(bp);
+				IEnumerator back = phaseList[0].PhaseCoroutine(frc);
+				yield return StartCoroutine(back);
+				yield return new WaitForSeconds (1.0f);
+				frc.PhaseListHistory.Add(bp);
+
+				frc.ActiveFlg = false;
+				break;
+			}
+
+
+			if(frc.AppliedHero.Health <= 10){
+
+				RestPhase rp = new RestPhase();
+				rp = setRestPhase();
+				phaseList.Add(rp);
+				IEnumerator rest = phaseList[0].PhaseCoroutine(frc);
+				yield return StartCoroutine(rest);
+				yield return new WaitForSeconds (1.0f);
+				frc.PhaseListHistory.Add(rp);
+
+			} else if(countPatrol <= 2) {
+
+				PatrolPhase pp = new PatrolPhase();
+				phaseList.Add(pp);
+				IEnumerator patrol = phaseList[0].PhaseCoroutine(frc);
+				yield return StartCoroutine(patrol);
+				yield return new WaitForSeconds (1.0f);
+				frc.PhaseListHistory.Add(pp);
+				countPatrol++;
+
+			} else {
+
+				SetFreeroamPhase(frc);
+				yield return new WaitForSeconds (1.0f);
+				for(int i = 0; i <= (phaseList.Count -1); i++){
+					IEnumerator mission = phaseList[i].PhaseCoroutine(frc);
+					yield return StartCoroutine(mission);
+					yield return new WaitForSeconds (1.0f);
+					
+				}
+				countPatrol = 0;
+
+				if(frc.AppliedHero.Health <= 0){
+					Debug.Log("Automatic Back");
+					BackPhase bp = new BackPhase();
+					bp.doesSendMedic = true;
+					//rp = setRestPhase();
+					phaseList = new List<MissionPhase>();
+					phaseList.Add(bp);
+					IEnumerator back = phaseList[0].PhaseCoroutine(frc);
+					yield return StartCoroutine(back);
+					yield return new WaitForSeconds (1.0f);
+					frc.PhaseListHistory.Add(bp);
+					break;
+				} else {
+					setFreeroamHoldResource(frc);
+				}
+
+			}
+		Debug.Log("mission history count : " + frc.PhaseListHistory.Count);
+		Debug.Log("mission phaselist count : " + phaseList.Count);
+
+		countPhases++;
+		}
+		frc.ActiveFlg = false;
+		/*while(true){
 			RestPhase pp = new RestPhase();
 			//PatrolPhase pp = new PatrolPhase();
 			phaseList.Add(pp);
@@ -254,20 +357,29 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				}
 				phaseList = new List<MissionPhase>();
 			}
-		}
+		}*/
 		//frc.ActiveFlg = false;
 	}
 
-	private List<MissionPhase> SetFreeroamPhase(){
+/////////////////
+////////////////
+	private void SetFreeroamPhase(FreeRoamClass frc){
 
-		List<MissionPhase> rtnList = new List<MissionPhase>();
+		List<MissionPhase> rtnList = frc.PhaseList;
 
 		int missionCount = FreeRoamDoc.SelectSingleNode("missions").ChildNodes.Count;
 		int randomCount = UnityEngine.Random.Range(1, missionCount);
 
 		XmlNode node0 = FreeRoamDoc.SelectSingleNode(@"//mission[@id=" + randomCount + "]/phases");
+
+		XmlNode rewardkey = FreeRoamDoc.SelectSingleNode(@"//mission[@id=" + randomCount + "]/rewardType");
+		XmlNode rewardval = FreeRoamDoc.SelectSingleNode(@"//mission[@id=" + randomCount + "]/rewardValue");
+		frc.MissionResourceType = rewardkey.InnerText;
+		frc.MissionResourceValue = int.Parse(rewardval.InnerText);
+
 		//XmlNode phase1 = node0.SelectSingleNode("./phase[@id=1]/type");
 		for(int i = 1; i <= node0.ChildNodes.Count; i++){
+
 			XmlNode TypeNode = node0.SelectSingleNode("./phase[@id=" + i + "]/type");
 			switch(TypeNode.InnerText){
 				case "Move" : 
@@ -304,12 +416,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					XmlNode vln = node0.SelectSingleNode("./phase[@id=" + i + "]/villains");
 					Debug.Log("villainnode : " + vln.InnerText);
 					Dictionary<string, int> villaindir = InstantiateVillainDic(vln);
-					battle.villainList = AddVillanByDict(villaindir);
-
-								//XmlNode node8 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/villains");
-								//Dictionary<string, int> villaindir = InstantiateVillainDic(node8);
-								//MisInfo.VillainList = AddVillanByDict(villaindir);
-					
+					battle.villainList = AddVillanByDict(villaindir);					
 					rtnList.Add(battle);
 
 					break;
@@ -320,7 +427,44 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			}
 
 		}
-		return rtnList;
+	}
+
+	private RestPhase setRestPhase(){
+		RestPhase ret = new RestPhase(); 
+
+		int countlist = RestPhaseDB.RestPhasePropList.Count;
+		int picknum = UnityEngine.Random.Range(0, countlist);
+
+		ret.recoveryValue = RestPhaseDB.RestPhasePropList[picknum].Value;
+
+		if(RestPhaseDB.RestPhasePropList[picknum].BeforeRestLines.Count > 0){
+			ret.beforeLines = new List<Line>();
+			for(int blines = 1; blines <= RestPhaseDB.RestPhasePropList[picknum].BeforeRestLines.Count; blines++){
+				Line aLine = new Line();
+				aLine.who = RestPhaseDB.RestPhasePropList[picknum].BeforeRestLines[blines - 1].Who;
+				aLine.what = RestPhaseDB.RestPhasePropList[picknum].BeforeRestLines[blines - 1].What;
+				ret.beforeLines.Add(aLine);
+			}
+		}
+
+		if(RestPhaseDB.RestPhasePropList[picknum].AfterRestLines.Count > 0){
+			ret.afterLines = new List<Line>();
+			for(int alines = 1; alines <= RestPhaseDB.RestPhasePropList[picknum].AfterRestLines.Count; alines++){
+				Line cLine = new Line();
+				cLine.who = RestPhaseDB.RestPhasePropList[picknum].AfterRestLines[alines - 1].Who;
+				cLine.what = RestPhaseDB.RestPhasePropList[picknum].AfterRestLines[alines - 1].What;
+				ret.afterLines.Add(cLine);
+			}
+		}
+
+		if(RestPhaseDB.RestPhasePropList[picknum].DoesEat == true){
+			ret.restType = "eat";
+			ret.food = RestPhaseDB.RestPhasePropList[picknum].Take;
+		} else {
+			ret.restType = "nap";
+		}
+
+		return ret;
 	}
 
 
@@ -330,6 +474,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 		if(MissionList.Count == 0){
 			missioncls.AppliedHero = hc;
+			HeroManager.Instance.SetParamsByCostume(hc);
 			MissionList.Add(missioncls);
 
 			//MissionList[i-1] = missioncls;
@@ -346,6 +491,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				if(MissionList[i-1].ActiveFlg == false || MissionList[i-1].ActiveFlg ==null){
 					MissionList[i-1] = missioncls;
 					MissionList[i-1].AppliedHero = hc;
+					HeroManager.Instance.SetParamsByCostume(hc);
 
 					IEnumerator misRoutine = MissionProgless(MissionList[i-1]);
 					StartCoroutine(misRoutine);
@@ -375,6 +521,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			if(mc.ActiveFlg == true){
 				IEnumerator mission = phaseList[i].PhaseCoroutine(mc);
 				yield return StartCoroutine(mission);
+
+				if(mc.AppliedHero.Health <= 0){
+					mc.ActiveFlg = false;
+				}
 			}
 
 			yield return new WaitForSeconds (1.0f);  

@@ -10,7 +10,7 @@ public class TalkPhase : MissionPhase {
 	public string endDesc; //end
 	public string Log;
 
-	public override IEnumerator PhaseCoroutine(MissionClass mc) {  
+	public override IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
 
 		if(firstDesc != null){
 			PrintLog(mc, firstDesc);
@@ -33,7 +33,7 @@ public class TalkPhase : MissionPhase {
 
 	}
 
-	private void PrintLog(MissionClass missioncls, string log){
+	private void PrintLog(BaseMissionClass missioncls, string log){
 		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
 		Log = Log + log + "\n";
 		Debug.Log(log);
