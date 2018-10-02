@@ -4,14 +4,30 @@ using UnityEngine;
 
 public class PatrolPhase : MissionPhase {
 
-	public string Type = "Patrol";
-	public string Log;
+	private string type = "Patrol";
+	public string log;
 	public List<Line> lines;
 	private int blankLogCount;
 	private int _blankLogCount;
 
+	public override string Type {
+		get{ return type; }
+		set{ type = value; }
+	}
+
+	public override string Log {
+		get{ return log; }
+		set{ log = value; }
+	}
 
 	public override IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
+
+		if(mc.PhaseMoveAction != null){
+			mc.PhaseMoveAction();
+		};
+
+		yield return new WaitForSeconds (0.5f);		
+
 
 		//blankLogCount = Random.Range(3, 5);
 		blankLogCount = Random.Range(1, 2);
@@ -38,7 +54,6 @@ public class PatrolPhase : MissionPhase {
 			yield return new WaitForSeconds (0.5f);		
 		}
 
-
 	}
 
 	private List<Line> SetLine(BaseMissionClass mc) {
@@ -49,12 +64,6 @@ public class PatrolPhase : MissionPhase {
 		rtnlist.Add(l1);
 
 		return rtnlist;
-	}
-
-	private void PrintLog(BaseMissionClass missioncls, string log){
-		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
-		Log = Log + log + "\n";
-		Debug.Log(log);
 	}
 
 }

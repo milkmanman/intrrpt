@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class BackPhase : MissionPhase  {
 
-	public string Type = "Back";
+	private string type = "Back";
 	public bool doesSendMedic = false;
 	public string Log;
 
+	public override string Type {
+		get{ return type; }
+		set{ type = value; }
+	}
+
 	public override IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
+
+		if(mc.PhaseMoveAction != null){
+			mc.PhaseMoveAction();
+		};
 
 		if(doesSendMedic == false){
 
@@ -46,14 +55,13 @@ public class BackPhase : MissionPhase  {
 
 		}
 
-
 	}
 
-	private void PrintLog(BaseMissionClass missioncls, string log){
+	/*private void PrintLog(BaseMissionClass missioncls, string log){
 		Debug.Log("_print_log_" +  log);
 		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
 		Log = Log + log + "\n";
 		Debug.Log(log);
-	}
+	}*/
 
 }

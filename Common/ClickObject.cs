@@ -32,7 +32,7 @@ public class ClickObject : MonoBehaviour {
 
 			if (Physics.Raycast(ray, out hit)){
 				GameObject obj = hit.collider.gameObject;
-				AudioManager.Instance.PlaySE(1);
+				//AudioManager.Instance.PlaySE(1);
 
 				switch(obj.tag){
 					case "Character/Hero" :

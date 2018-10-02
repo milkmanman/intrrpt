@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class BattlePhase : MissionPhase {
 
-	public string Type = "Battle";
+	private string type = "Battle";
 	public string BridgeMsg;
 	public string Log;
 	public List<VillainStatusClass> villainList;
 	public int RemainVillains;
 
-
+	public override string Type {
+		get{ return type; }
+		set{ type = value; }
+	}
 
 	public override IEnumerator PhaseCoroutine (BaseMissionClass missioncls) {
+
+		if(missioncls.PhaseMoveAction != null){
+			missioncls.PhaseMoveAction();
+		};
 
 		Debug.Log("villian list : " + villainList.Count);
 		//missioncls.AppliedHero.Health = 300;
@@ -49,6 +56,7 @@ public class BattlePhase : MissionPhase {
 				}
 			}
 		}
+
 	}
 
 	private string Attack(int a, HeroStatusClass hero, VillainStatusClass villain){
@@ -76,7 +84,7 @@ public class BattlePhase : MissionPhase {
 
 
 
-	private void PrintLog(BaseMissionClass missioncls, string log){
+	/*private void PrintLog(BaseMissionClass missioncls, string log){
 		if(log.Contains("Villain")){
 			log = log.Replace("Villain", "<color=#ff0000>Villain</color>");
 		} else if (log.Contains("Hero")) {
@@ -85,5 +93,5 @@ public class BattlePhase : MissionPhase {
 		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
 		Log = Log + log + "\n";
 		Debug.Log(log);
-	}
+	}*/
 }

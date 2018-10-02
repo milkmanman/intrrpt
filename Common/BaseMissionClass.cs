@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ public class BaseMissionClass {
 	private List<string> phaseHistory;
 	private HeroStatusClass appliedHero;
 	private string missionLog;
+	private Action phaseMoveAction;
+	private Action pushMissionLogAction;
 
 	public int Type{
 		get {return type;}
@@ -45,6 +48,16 @@ public class BaseMissionClass {
 	public string MissionLog{
 		get {return missionLog;}
 		set {missionLog = value;}
+	}
+
+	public Action PhaseMoveAction{
+		get {return phaseMoveAction;}
+		set {phaseMoveAction = value;}
+	}
+
+	public Action PushMissionLogAction{
+		get {return pushMissionLogAction;}
+		set {pushMissionLogAction = value;}
 	}
 
 }

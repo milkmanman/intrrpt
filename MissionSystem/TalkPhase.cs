@@ -4,13 +4,23 @@ using UnityEngine;
 
 public class TalkPhase : MissionPhase {
 
-	public string Type = "Talk";
+	private string type = "Talk";
 	public List<Line> lines;
 	public string firstDesc; //end
 	public string endDesc; //end
 	public string Log;
 
+	public override string Type {
+		get{ return type; }
+		set{ type = value; }
+	}
+
 	public override IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
+
+
+		if(mc.PhaseMoveAction != null){
+			mc.PhaseMoveAction();
+		};
 
 		if(firstDesc != null){
 			PrintLog(mc, firstDesc);
@@ -30,13 +40,12 @@ public class TalkPhase : MissionPhase {
 
 		}
 
-
 	}
 
-	private void PrintLog(BaseMissionClass missioncls, string log){
+	/*private void PrintLog(BaseMissionClass missioncls, string log){
 		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
 		Log = Log + log + "\n";
 		Debug.Log(log);
-	}
+	}*/
 
 }

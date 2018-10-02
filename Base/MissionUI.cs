@@ -8,7 +8,9 @@ public class MissionUI : MonoBehaviour {
 
 	public GameObject MissionNodeField;
 	public GameObject MissionDetailField;
+	public GameObject FreeRoamField;
 	public GameObject SelectHeroDropdown;
+	public GameObject SelectHeroInFreeroamDropdown;
 	public GameObject SubmitButton;
 	public GameObject FreeroamButton;
 	public GameObject HoldMissionNode;
@@ -45,14 +47,23 @@ public class MissionUI : MonoBehaviour {
 			}
 
 			SelectHero(SelectHeroDropdown);
+			SelectHero(SelectHeroInFreeroamDropdown);
 	}
 
 
 	public void OnMissionNodeClicked (MissionClass mc) {
-		bool ismissionSAD = false;
-		this.gameObject.GetComponent<UITransition>().UITransitioner(ismissionSAD); //transition switch sad or not
+		bool isFreeroam = false;
+		this.gameObject.GetComponent<UITransition>().UITransitioner(isFreeroam); //transition switch sad or not
 			MissionDescription(mc);
 			SelectHero(SelectHeroDropdown);
+
+	}
+
+	public void OnFreeroamNodeClicked () {
+		bool isFreeroam = true;
+		this.gameObject.GetComponent<UITransition>().UITransitioner(isFreeroam); //transition switch sad or not
+			//MissionDescription(mc);
+			SelectHero(SelectHeroInFreeroamDropdown);
 
 	}
 
@@ -98,14 +109,30 @@ public class MissionUI : MonoBehaviour {
 			SelectedHeroName = "";
 		}
 		//SelectedHeroName = SelectHeroDropdown.transform.Find("Label").GetComponent<Text>().text;
-		RefleshStatusBars(SelectedHeroName);
+		RefleshStatusBars(SelectedHeroName, false);
 	}
 
-	private void RefleshStatusBars(string heroName){
+	public void SH_OnValueChange_Freeroam () {
+		if(SelectHeroInFreeroamDropdown.GetComponent<Dropdown>().value != 0){
+			SubmitButton.GetComponent<Button>().interactable = true;
+			SelectedHeroName = SelectHeroInFreeroamDropdown.transform.Find("Label").GetComponent<Text>().text;
+		} else {
+			SubmitButton.GetComponent<Button>().interactable = false;
+			SelectedHeroName = "";
+		}
+		RefleshStatusBars(SelectedHeroName, true);
+	}
+
+	private void RefleshStatusBars(string heroName, bool isFreeroam){
 		float HpPercentage = 1.0f;
 		float AtkPercentage = 1.0f;
 		float DefPercentage = 1.0f;
-		GameObject ParentBars = MissionDetailField.transform.Find("Bars").gameObject;
+		GameObject ParentBars = null;
+		if(isFreeroam == false){
+			ParentBars = MissionDetailField.transform.Find("Bars").gameObject;
+		} else {
+			ParentBars = FreeRoamField.transform.Find("Bars").gameObject;
+		}
 		if(heroName != ""){
 		HeroStatusClass hero = HeroManager.Instance.SearchByName(SelectedHeroName);
 		HeroManager.Instance.SetParamsByCostume(hero);
@@ -129,8 +156,9 @@ public class MissionUI : MonoBehaviour {
 	public void FreeRoamButtonOnClicked() {
 		HeroStatusClass selectedhero = HeroManager.Instance.SearchByName(SelectedHeroName);
 		MissionManager.Instance.StartFreeRoam(selectedhero);
-		//HoldMissionNode.GetComponent<MissionNode>().SetHero(selectedhero);
-		//HoldMissionNode.GetComponent<MissionNode>().StartMission();
+		this.gameObject.GetComponent<UITransition>().UITransitioner(false);
+		GeneralHelper.Instance.NoticeUI("Start Freeroam", SelectedHeroName + " is start free roaming.");
+
 	}
 
 

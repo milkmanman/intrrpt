@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RestPhase : MissionPhase {
 
-	public string Type = "Rest";
+	private string type = "Rest";
 	public List<Line> beforeLines;
 	public List<Line> afterLines;
 	public string restType;
@@ -12,16 +12,17 @@ public class RestPhase : MissionPhase {
 	public int recoveryValue;
 	public string Log;
 
-	/*void Awake(){
-		restType = "eat";
-		food = "a burger and a shake";
-		recoveryValue = 10;
-	}*/
+	public override string Type {
+		get{ return type; }
+		set{ type = value; }
+	}
 
 	public override IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
 
-		//restType = "eat";
-		//food = "a burger and a shake";
+		if(mc.PhaseMoveAction != null){
+			mc.PhaseMoveAction();
+		};
+
 		recoveryValue = 10;
 
 
@@ -54,11 +55,11 @@ public class RestPhase : MissionPhase {
 
 	}
 
-	private void PrintLog(BaseMissionClass missioncls, string log){
+	/*private void PrintLog(BaseMissionClass missioncls, string log){
 		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
 		Log = Log + log + "\n";
 		Debug.Log(log);
-	}
+	}*/
 
 	private void RecoverHero(BaseMissionClass mc){
 		mc.AppliedHero.Health += recoveryValue;

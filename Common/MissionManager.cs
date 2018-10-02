@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System;
 using System.Xml;
@@ -187,17 +188,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
         } else {
             frc.HoldResources.Add(frc.MissionResourceType, frc.MissionResourceValue);
 		}
-		DebugHoldResource(frc.HoldResources);
-	}
-
-	private void DebugHoldResource(Dictionary<string, int> test){
-		
-		string debugstr = "resource : ";
-
-		foreach(KeyValuePair<string, int> pair in test){
-			debugstr += pair.Key + " : " + pair.Value + "\n";
-		}
-		Debug.LogWarning(debugstr);
 	}
 
 	private Dictionary<string, int> InstantiateVillainDic(XmlNode villainsNode){
@@ -243,7 +233,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		FreeRoamClass frc = new FreeRoamClass();
 		frc.AppliedHero = hc;
 		HeroManager.Instance.SetParamsByCostume(hc);
-		Debug.Log("HERO HEALTH : " + hc.Health);
 		//MissionList.Add(frc);
 		FreeRoamList.Add(frc);
 		IEnumerator frmRoutine = FreeroamProgress(frc);
@@ -270,44 +259,50 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				BackPhase bp = new BackPhase();
 				//rp = setRestPhase();
 				phaseList.Add(bp);
+				frc.PhaseListHistory.Add(bp);
 				IEnumerator back = phaseList[0].PhaseCoroutine(frc);
 				yield return StartCoroutine(back);
 				yield return new WaitForSeconds (1.0f);
-				frc.PhaseListHistory.Add(bp);
 
 				frc.ActiveFlg = false;
 				break;
 			}
 
 
-			if(frc.AppliedHero.Health <= 10){
+			if(frc.AppliedHero.Health <= 40){
 
 				RestPhase rp = new RestPhase();
 				rp = setRestPhase();
 				phaseList.Add(rp);
+				frc.PhaseListHistory.Add(rp);
 				IEnumerator rest = phaseList[0].PhaseCoroutine(frc);
 				yield return StartCoroutine(rest);
 				yield return new WaitForSeconds (1.0f);
-				frc.PhaseListHistory.Add(rp);
 
 			} else if(countPatrol <= 2) {
 
 				PatrolPhase pp = new PatrolPhase();
 				phaseList.Add(pp);
+				frc.PhaseListHistory.Add(pp);
 				IEnumerator patrol = phaseList[0].PhaseCoroutine(frc);
 				yield return StartCoroutine(patrol);
 				yield return new WaitForSeconds (1.0f);
-				frc.PhaseListHistory.Add(pp);
 				countPatrol++;
 
 			} else {
 
 				SetFreeroamPhase(frc);
 				yield return new WaitForSeconds (1.0f);
-				for(int i = 0; i <= (phaseList.Count -1); i++){
-					IEnumerator mission = phaseList[i].PhaseCoroutine(frc);
+				while(phaseList.Count > 0) {
+				//for(int i = 0; i <= (phaseList.Count -1); i++){
+					//IEnumerator mission = phaseList[i].PhaseCoroutine(frc);
+					//frc.PhaseListHistory.Add(phaseList[i]);
+					IEnumerator mission = phaseList.First().PhaseCoroutine(frc);
+					frc.PhaseListHistory.Add(phaseList.First());
 					yield return StartCoroutine(mission);
 					yield return new WaitForSeconds (1.0f);
+					phaseList.RemoveAt(0);
+					Debug.LogWarning("ForLooping");
 					
 				}
 				countPatrol = 0;
@@ -319,10 +314,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					//rp = setRestPhase();
 					phaseList = new List<MissionPhase>();
 					phaseList.Add(bp);
+					frc.PhaseListHistory.Add(bp);
 					IEnumerator back = phaseList[0].PhaseCoroutine(frc);
 					yield return StartCoroutine(back);
 					yield return new WaitForSeconds (1.0f);
-					frc.PhaseListHistory.Add(bp);
 					break;
 				} else {
 					setFreeroamHoldResource(frc);
@@ -368,7 +363,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		List<MissionPhase> rtnList = frc.PhaseList;
 
 		int missionCount = FreeRoamDoc.SelectSingleNode("missions").ChildNodes.Count;
-		int randomCount = UnityEngine.Random.Range(1, missionCount);
+		int randomCount = UnityEngine.Random.Range(1, missionCount + 1);
 
 		XmlNode node0 = FreeRoamDoc.SelectSingleNode(@"//mission[@id=" + randomCount + "]/phases");
 
@@ -414,7 +409,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					BattlePhase battle = new BattlePhase();
 					List<VillainStatusClass> villainList = new List<VillainStatusClass>();
 					XmlNode vln = node0.SelectSingleNode("./phase[@id=" + i + "]/villains");
-					Debug.Log("villainnode : " + vln.InnerText);
 					Dictionary<string, int> villaindir = InstantiateVillainDic(vln);
 					battle.villainList = AddVillanByDict(villaindir);					
 					rtnList.Add(battle);
@@ -427,6 +421,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			}
 
 		}
+	}
+
+	public void FinishFreeroam(FreeRoamClass frc){
+		ResourceManager.Instance.VulkResource(frc.HoldResources);
 	}
 
 	private RestPhase setRestPhase(){

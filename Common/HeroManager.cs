@@ -64,8 +64,15 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		Hero.Name = PlayerPrefs.GetString (heronumber + ".Name");
 		Hero.Gender = PlayerPrefs.GetString (heronumber + ".Gender");
 		Hero.Skin = PlayerPrefs.GetInt (heronumber + ".Skin");
-		Hero.Costume = PlayerPrefs.GetString (heronumber + ".Costume");
-		Hero.CostumeLv = PlayerPrefs.GetInt (heronumber + ".CostumeLv");
+		if(PlayerPrefs.GetString (heronumber + ".Costume") != ""){
+			Hero.Costume = PlayerPrefs.GetString (heronumber + ".Costume");
+			Hero.CostumeLv = PlayerPrefs.GetInt (heronumber + ".CostumeLv");
+		} else {
+			Hero.Costume = "N/A";
+			Hero.CostumeLv = 1;
+		}
+		//Hero.Costume = PlayerPrefs.GetString (heronumber + ".Costume");
+		//Hero.CostumeLv = PlayerPrefs.GetInt (heronumber + ".CostumeLv");
 		Hero.Heroism = PlayerPrefs.GetInt (heronumber + ".Heroism");
 		Hero.Status = PlayerPrefs.GetInt (heronumber + ".Status");
 		return Hero;

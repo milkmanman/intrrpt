@@ -4,15 +4,31 @@ using UnityEngine;
 
 public class MovePhase : MissionPhase {
 
-	public string Type = "Move";
+	
+	private string type = "Move";
 	public string Destination;
 	//public int Distance; //10 - 100
 	//public int Obstacle; // 0 - 100
 	public string BridgeMsg;
 	//public string MustMsg;
-	public string Log;
+	public string log;
+
+	public override string Type {
+		get{ return type; }
+		set{ type = value; }
+	}
+
+	public override string Log {
+		get{ return log; }
+		set{ log = value; }
+	}
 
 	public override IEnumerator PhaseCoroutine(BaseMissionClass mc) {  
+
+		if(mc.PhaseMoveAction != null){
+			mc.PhaseMoveAction();
+		};
+
 		PrintLog(mc, mc.AppliedHero.Name + " : Moving to " + Destination);
 		int count = 0;
 
@@ -29,14 +45,7 @@ public class MovePhase : MissionPhase {
 		yield return new WaitForSeconds (1.0f);  
 
 		PrintLog(mc, "Arrieved at " + Destination + ", " + BridgeMsg);
+
 	}
-
-
-	private void PrintLog(BaseMissionClass missioncls, string log){
-		missioncls.MissionLog = missioncls.MissionLog + log + "\n";
-		Log = Log + log + "\n";
-		Debug.Log(log);
-	}
-
 
 }

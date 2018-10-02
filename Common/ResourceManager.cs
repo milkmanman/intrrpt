@@ -1,15 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceManager : SingletonMonoBehaviourFast<ResourceManager> {
 
+	public enum Type {
+		Cash, Develop, Medic, Tech
+	}
+
 	public int Cash = 1000;
-	private int Intel = 200;
-	private int Tech = 1000;
+	public int Intel = 200;
+	public int Tech = 1000;
 	private int Medic = 3000;
 	private int Tailor = 4000;
 	private List<string> ResourceLog = new List<string>();
+
+
+	public void VulkResource(Dictionary<string, int> HoldResources){
+		foreach(KeyValuePair<string, int> pair in HoldResources){
+			var Values = Enum.GetValues(typeof(Type));
+    		foreach (Type value in Values){
+        		var strValue = value.ToString();
+        		if(strValue ==  pair.Key){
+					IncreaseResource(pair.Key, pair.Value);
+        		}
+    		}
+		}
+		Debug.LogWarning("Vulked Increase Resource!");
+	}
+
 
 	public void IncreaseResource(string ResourceType, int value) {
 		if (ResourceType == "Cash") {

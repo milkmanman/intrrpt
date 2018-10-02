@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
+
 
 public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 
@@ -16,6 +18,7 @@ public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 	private int forwardBGMNo = 2017;
 
 	void Start () {
+
 		int a = Random.Range(0, 2);
 		if(a == 1){
 			PlayBGM();
@@ -23,6 +26,16 @@ public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 			PlayInterval();
 		}
 	}
+
+	void OnSceneLoaded( Scene scene, LoadSceneMode mode ){
+		if(scene.name == "Base"){
+			bgmSource = GameObject.Find("Main Camera").GetComponent<AudioSource>();
+		} else if(scene.name == "City"){
+
+		}
+    }
+
+
 
 	public void PlayBGM(){
 		int bgmNo = Random.Range(0, BGMList.Count);
