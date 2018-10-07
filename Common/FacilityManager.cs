@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
+using System;
 
 public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 
@@ -18,7 +19,6 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	public List<DevelopMemberClass> DevelopMembers;
 	public List<FacilityClass> DevedFacilityList;
 	public List<FacilityClass> FacilityList;
-	public List<Facility> FacilityObject;
 	public List<IEnumerator> routineList;
 
 	public Dictionary<string, int> FacilityPhases;
@@ -70,7 +70,9 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 		FacilityPhases = GeneralHelper.Instance.LoadDict<string, int>("FacilityPhases");
 
 		SetFacilityList();
-		InstantiateFacility();
+		//InstantiateFacility();
+		SceneController.Instance.ChangeScene += ChangeScene;
+
 
 
 		/*FacilityList = new List<FacilityClass>();
@@ -96,11 +98,16 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 		EnableBuff.Add("flashGranade", true);
 		SetOnetimeBuffList(EnableBuff);
 
-
-		//drone[@id=0]
-
 		Debug.Log("Productivity : " + Productivity.ToString());
 
+		
+
+	}
+
+	public void ChangeScene(){
+		if(SceneController.Instance.CurrentScene == "Base"){
+			InstantiateFacility();
+		}
 	}
 
 	public void SetFacilityList(){
@@ -199,69 +206,24 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	}
 
 
-	/*private void InstantiateFacility(){
-		var go = new GameObject();
-		go.name = "Drone1";
 
-		Facility test = FacilityObject[0];
-		int facilityLength = test.FacilityObject.Count;
-
-		for(int i = 0; i <= facilityLength - 1; i++){
-			GameObject test_prefab = (GameObject)Instantiate(
-				test.FacilityObject[i].obj,
-				test.FacilityObject[i].pos,
-				Quaternion.Euler(test.FacilityObject[i].eul)
-			);
-			test_prefab.name = "Drone_" + i.ToString();
-			test_prefab.transform.SetParent(go.transform);
-		}
-	}*/
 
 	private void InstantiateFacility(){
-		GameObject Field = GameObject.Find("FacilityField");
-		GameObject targetPrefab = null;
+		GameObject Views = GameObject.Find("BaseViews");
+		if(Views != null){
+			FacilityInstantiate facins =  Views.GetComponent<FacilityInstantiate>();
 
-		//public List<FacilityClass> DevedFacilityList;
-		for(int i = 1; i <= DevedFacilityList.Count; i++){
-			Debug.Log("instantiate - " + DevedFacilityList[i - 1].Category + " : " + DevedFacilityList[i - 1].Phase);
-			if(DevedFacilityList[i -1].Category == "drone"){
-				targetPrefab = DronePrefabs[DevedFacilityList[i-1].Phase];
-			} else if(DevedFacilityList[i -1].Category == "jumpingdrone"){
-				targetPrefab = JumpingDronePrefabs[DevedFacilityList[i-1].Phase];
+			for(int i = 1; i <= DevedFacilityList.Count; i++){
+				facins.InstantiateFacilities(DevedFacilityList[i - 1].Category, DevedFacilityList[i - 1].Phase);
+				Debug.Log("instantiate - " + DevedFacilityList[i - 1].Category + " : " + DevedFacilityList[i - 1].Phase); // instantiate drone : 0
 			}
 
-
-			if(targetPrefab != null){
-				GameObject Prefab = (GameObject)Instantiate(
-					targetPrefab,
-					targetPrefab.transform.position,
-					Quaternion.Euler(targetPrefab.transform.eulerAngles)
-				);
-				Prefab.name = targetPrefab.name;
-				Prefab.transform.SetParent(Field.transform);
-				//go.transform.SetParent(Field.transform);
-			}
-
+		} else{
+			Debug.LogWarning("dojfsajfiew");
 		}
-		
 
-		/*var go = new GameObject();
-		go.name = "Drone1";
-
-		Facility test = FacilityObject[0];
-		int facilityLength = test.FacilityObject.Count;
-
-		for(int i = 0; i <= facilityLength - 1; i++){
-			GameObject test_prefab = (GameObject)Instantiate(
-				test.FacilityObject[i].obj,
-				test.FacilityObject[i].pos,
-				Quaternion.Euler(test.FacilityObject[i].eul)
-			);
-			test_prefab.name = "Drone_" + i.ToString();
-			test_prefab.transform.SetParent(go.transform);
-		}
-		go.transform.SetParent(Field.transform);*/
 	}
+
 
 	public void addDevelopMember (RecruitClass test) {
 		DevelopMemberClass DevMember = test.CloneDevelop();

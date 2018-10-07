@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 
 public class NotificationUI : MonoBehaviour {
@@ -9,6 +10,10 @@ public class NotificationUI : MonoBehaviour {
 	public GameObject field;
 	public Text title;
 	public Text body;
+
+
+	public TextMeshProUGUI title_tmp;
+	public TextMeshProUGUI body_tmp;
 
 	IEnumerator holdCoroutine;
 
@@ -36,6 +41,8 @@ public class NotificationUI : MonoBehaviour {
 
 		title.text = titlestr;
 		body.text = bodystr;
+		title_tmp.text = titlestr;
+		body_tmp.text = bodystr;
 
 		Vector3 pos1 = field.transform.position;
 		pos1.x -= 200;

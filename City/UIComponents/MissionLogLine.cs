@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MissionLogLine : MonoBehaviour {
 
@@ -23,7 +24,8 @@ public class MissionLogLine : MonoBehaviour {
 
 	public void RefleshLog(){
 		Transform lastChild = NewLogField.transform.GetChild(NewLogField.transform.childCount - 1);
-		Text logtext = lastChild.Find("PhaseLogs/Text").GetComponent<Text>();
+		TextMeshProUGUI logtext = lastChild.Find("PhaseLogs/TextMeshPro").GetComponent<TextMeshProUGUI>();
+
 		logtext.text = frc.PhaseList.First().Log;
 	}
 

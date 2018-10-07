@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WholeUI : MonoBehaviour {
 
@@ -13,7 +14,9 @@ public class WholeUI : MonoBehaviour {
 	public Text Medic;
 	public Text Tailor;
 
-	public Text HeroesField;
+	public TextMeshProUGUI HeroesField_tmp;
+
+	//public Text HeroesField;
 	public Text DevsField;
 
 
@@ -48,7 +51,9 @@ public class WholeUI : MonoBehaviour {
 		if(listhero.Count >= 5) test += "\n" + listhero[4];
 		if(listhero.Count >= 6) test += "\n" + listhero[5];
 
-		HeroesField.text = test;
+		HeroesField_tmp.text = test;
+		//HeroesField.text = test;
+
 
 	}
 
