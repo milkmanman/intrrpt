@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CityFreeroamUI : MonoBehaviour {
 
@@ -15,8 +16,9 @@ public class CityFreeroamUI : MonoBehaviour {
 	public GameObject button;
 	public Button ComeBackButton;
 	public FreeRoamClass frc;
-	public Text ResourceText;
-	public Text CurrentPhase;
+	
+	public TextMeshProUGUI ResourceText_tmp;
+	public TextMeshProUGUI CurrentPhase_tmp;
 	
 	public MissionLogLine mll;
 
@@ -71,13 +73,13 @@ public class CityFreeroamUI : MonoBehaviour {
 				resourceTxt = resourceTxt + pair.Key + " : " + pair.Value.ToString() + "\n";
 			}
 		}
-		ResourceText.text = resourceTxt;
+		ResourceText_tmp.text = resourceTxt;
 	}
 	
 	private void DisplayCurrentMission(){
 		if(frc.PhaseListHistory != null){
 			string currentMissionStr = frc.PhaseListHistory.Last().Type;
-			CurrentPhase.text = currentMissionStr;
+			CurrentPhase_tmp.text = currentMissionStr;
 		}
 	}
 

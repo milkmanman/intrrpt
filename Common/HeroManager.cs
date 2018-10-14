@@ -15,6 +15,8 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 
 	public GameObject prefabHero;
 
+	public
+
 
 	void Awake () {
 		HeroList = new List<HeroStatusClass>();
@@ -48,6 +50,7 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		HeroStatusClass Hero = test.CloneHero();
 		if(HeroList.Count <= 5){
 			HeroList.Add(Hero);
+			instantiateHeroes(Hero, HeroList.Count);
 			Debug.Log("Adding Hero is Success");
 
 		} else {
@@ -79,16 +82,17 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 	}
 
 	void SaveHero () {
-		for(int i = 1; i <= HeroList.Count - 1; i++){
+		for(int i = 1; i <= HeroList.Count; i++){
 
-					PlayerPrefs.SetString("Hero" + i.ToString() + ".Name", HeroList[i].Name);
-					PlayerPrefs.SetString("Hero" + i.ToString() + ".Gender", HeroList[i].Gender);
-					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Skin", HeroList[i].Skin);
-					PlayerPrefs.SetString("Hero" + i.ToString() + ".Costume", HeroList[i].Costume);
-					PlayerPrefs.SetInt("Hero" + i.ToString() + ".CostumeLv", HeroList[i].CostumeLv);
-					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Heroism", HeroList[i].Heroism);
-					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Status", HeroList[i].Status);
+					PlayerPrefs.SetString("Hero" + i.ToString() + ".Name", HeroList[i - 1].Name);
+					PlayerPrefs.SetString("Hero" + i.ToString() + ".Gender", HeroList[i - 1].Gender);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Skin", HeroList[i - 1].Skin);
+					PlayerPrefs.SetString("Hero" + i.ToString() + ".Costume", HeroList[i - 1].Costume);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".CostumeLv", HeroList[i - 1].CostumeLv);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Heroism", HeroList[i - 1].Heroism);
+					PlayerPrefs.SetInt("Hero" + i.ToString() + ".Status", HeroList[i - 1].Status);
 					PlayerPrefs.Save ();
+					Debug.Log("Saved Hero");
 
 		}
 	}
@@ -175,7 +179,7 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 		float cos_atk;
 		float cos_def;
 
-		if(xmlDoc.SelectSingleNode(@"//" + heroclass.Costume + "/HP") == null){
+		if(heroclass.Costume == null || xmlDoc.SelectSingleNode(@"//" + heroclass.Costume + "/HP") == null){
 
 			heroclass.Health = 100;
 			heroclass.MaxHealth = 100;

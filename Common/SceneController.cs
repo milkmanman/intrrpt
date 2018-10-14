@@ -18,7 +18,9 @@ public class SceneController : SingletonMonoBehaviourFast<SceneController> {
 
 	private IEnumerator LoadStartScene(){
 		yield return StartCoroutine (LoadSceneAndSetActive (StartScene));
-		ChangeScene();
+		if(ChangeScene != null){
+			ChangeScene();
+		}
 	}
 
 	public void LoadingScene (string sceneName){

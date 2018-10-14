@@ -10,9 +10,9 @@ public class OptionUI : MonoBehaviour {
 	public Slider BGM;
 	public Slider SE;
 
-	void Start(){
+	/*void Start(){
 		LoadBGM();
-	}
+	}*/
 
 	public void SetBGMVol(float bgmVolume) {
 		test.SetFloat("BGMVol", bgmVolume);
@@ -21,18 +21,19 @@ public class OptionUI : MonoBehaviour {
 		test.SetFloat("SEVol", seVolume);
 	}
 
-	public void SaveBGM(){
+	/*public void SaveBGM(){
 		PlayerPrefs.SetFloat("Audio.BGMVol", BGM.value);
 		PlayerPrefs.SetFloat("Audio.SEVol", SE.value);
-	}
+	}*/
 
-	public void LoadBGM(){
+	/*public void LoadBGM(){
 		test.SetFloat("BGMVol", PlayerPrefs.GetFloat("Audio.BGMVol"));
 		test.SetFloat("SEVol", PlayerPrefs.GetFloat("Audio.SEVol"));
-	}
+	}*/
 
 	public void OnSaveButtonClicked(){
-		SaveBGM();
+		AudioManager.Instance.SaveSetting(BGM.value, SE.value);
+		//SaveBGM();
 	}
 
 	public void OnBackButtonClicked(){

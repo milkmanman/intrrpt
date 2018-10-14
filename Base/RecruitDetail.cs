@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class RecruitDetail : MonoBehaviour {
 
 	public GameObject HeroUI;
 	public Text Name;
+	public TextMeshProUGUI Name_tmp;
 	public Image Icon;
 	public Text Msg;
 	public Text Personality;
@@ -22,6 +24,9 @@ public class RecruitDetail : MonoBehaviour {
 
 	public void Reflesh(RecruitClass AC){
 		Name.text = AC.Name;
+		Name_tmp.text = AC.Name;
+
+
 		Msg.text = AC.Message;
 		float HpPercentage = (float)(AC.Status1) / 100f;
 		Heroism.fillAmount = HpPercentage;

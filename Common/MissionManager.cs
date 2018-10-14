@@ -269,7 +269,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 			}
 
 
-			if(frc.AppliedHero.Health <= 40){
+			if(frc.AppliedHero.Health <= 50){
 
 				RestPhase rp = new RestPhase();
 				rp = setRestPhase();
@@ -308,11 +308,12 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				countPatrol = 0;
 
 				if(frc.AppliedHero.Health <= 0){
+
 					Debug.Log("Automatic Back");
 					BackPhase bp = new BackPhase();
 					bp.doesSendMedic = true;
 					//rp = setRestPhase();
-					phaseList = new List<MissionPhase>();
+					phaseList.Clear();
 					phaseList.Add(bp);
 					frc.PhaseListHistory.Add(bp);
 					IEnumerator back = phaseList[0].PhaseCoroutine(frc);

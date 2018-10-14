@@ -3,22 +3,70 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
+
 
 
 public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 
-	public List<AudioClip> BGMList;
   public List<AudioClip> OneshotSEList;
-	public List<AudioClip> IntervalList;
+
+	public List<AudioClip> StartBgmList;
+
+	public List<AudioClip> BaseBgmList;
+	public List<AudioClip> BaseIntervalList;
+
+	public List<AudioClip> CityBgmList;
 
 	public AudioSource bgmSource;
 	public AudioSource seSource;
 	public AudioSource intervalSource;
 
+	public AudioMixer MasterMixer;
+
 	private int forwardBGMNo = 2017;
 
-	void Start () {
+	void Awake () {
+		SceneController.Instance.ChangeScene += OnNewSceneLoaded;
+		LoadSetting();
+	}
 
+	public void OnNewSceneLoaded(){
+
+		InitializeSources();		
+
+		if(SceneController.Instance.CurrentScene == "Base"){
+			BgmOnBase();
+		} else if(SceneController.Instance.CurrentScene == "City"){
+			BgmOnCity();
+		} else if(SceneController.Instance.CurrentScene == "Start"){
+			BgmOnStart();
+		}
+
+	
+    }
+
+	private void InitializeSources(){
+	bgmSource.Stop();
+	seSource.Stop();
+	intervalSource.Stop();
+	}
+
+
+	public void SaveSetting(float bgm, float se){
+		PlayerPrefs.SetFloat("Audio.BGMVol", bgm);
+		PlayerPrefs.SetFloat("Audio.SEVol", se);
+	}
+
+	public void LoadSetting(){
+		MasterMixer.SetFloat("BGMVol", PlayerPrefs.GetFloat("Audio.BGMVol"));
+		MasterMixer.SetFloat("SEVol", PlayerPrefs.GetFloat("Audio.SEVol"));
+	}
+
+
+
+	private void BgmOnBase(){
+		Debug.LogWarning("warning");
 		int a = Random.Range(0, 2);
 		if(a == 1){
 			PlayBGM();
@@ -27,26 +75,25 @@ public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 		}
 	}
 
-	void OnSceneLoaded( Scene scene, LoadSceneMode mode ){
-		if(scene.name == "Base"){
-			bgmSource = GameObject.Find("Main Camera").GetComponent<AudioSource>();
-		} else if(scene.name == "City"){
+	private void BgmOnCity(){
+		PlayCityBGM();
+	}
 
-		}
-    }
+	private void BgmOnStart(){
+		PlayStartBGM();
+	}
+
+	private void PlayCityBGM(){
+		int bgmNo = Random.Range(0, CityBgmList.Count);
+		intervalSource.clip = CityBgmList[bgmNo];
+		intervalSource.Play();
+	}
 
 
-
-	public void PlayBGM(){
-		int bgmNo = Random.Range(0, BGMList.Count);
-		while(bgmNo == forwardBGMNo){
-			bgmNo = Random.Range(0, BGMList.Count);
-		}
-
-		bgmSource.clip = BGMList[bgmNo];
-		bgmSource.Play();
-		StartCoroutine(IntervalEnd(bgmSource.clip.length, true));
-		forwardBGMNo = bgmNo;
+	private void PlayStartBGM(){
+		int bgmNo = Random.Range(0, StartBgmList.Count);
+		intervalSource.clip = BaseIntervalList[bgmNo];
+		intervalSource.Play();
 	}
 
 	public void PlaySE(int seNo){
@@ -55,12 +102,26 @@ public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 	}
 
 	private void PlayInterval(){
-		int intervalNo = Random.Range(0, IntervalList.Count);
+		int intervalNo = Random.Range(0, BaseIntervalList.Count);
 
-		intervalSource.clip = IntervalList[intervalNo];
+		intervalSource.clip = BaseIntervalList[intervalNo];
 		intervalSource.Play();
 		StartCoroutine(IntervalEnd(intervalSource.clip.length, false));
 
+	}
+
+	public void PlayBGM(){
+
+		int bgmNo = Random.Range(0, BaseBgmList.Count);
+		while(bgmNo == forwardBGMNo){
+			bgmNo = Random.Range(0, BaseBgmList.Count);
+		}
+
+		bgmSource.clip = BaseBgmList[bgmNo];
+		bgmSource.Play();
+		StartCoroutine(IntervalEnd(bgmSource.clip.length, true));
+		forwardBGMNo = bgmNo;
+		
 	}
 
 	IEnumerator IntervalEnd (float length, bool isbgm) {

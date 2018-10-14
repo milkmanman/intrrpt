@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class RecruitNode : MonoBehaviour {
 
 	public RecruitClass Hero;
 
-	public Text RecruitName;
-	public Text Status1Name;
+	public TextMeshProUGUI RecruitName_tmp;
+
 	public Image Status1;
 	public Image Motivation;
 	public Button SelectButton;
-	public Text Param1Name;
-	public Text Param2Name;
+	public TextMeshProUGUI Param1Name;
+	public TextMeshProUGUI Param2Name;
 
 	// Use this for initialization
 	void Start () {
@@ -43,8 +44,7 @@ public class RecruitNode : MonoBehaviour {
 		}
 
 
-
-		RecruitName.text = Hero.Name;
+		RecruitName_tmp.text = Hero.Name;
 
 		float Status1Percentage = (float)(Hero.Status1) / 100f;
 		Status1.fillAmount = Status1Percentage;

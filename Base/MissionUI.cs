@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
 using UnityEngine.UI;
+using TMPro;
 
 public class MissionUI : MonoBehaviour {
 
@@ -36,7 +37,10 @@ public class MissionUI : MonoBehaviour {
 
 			string MissionName = misClass.Name;
 			var name = item.Find("Name").GetComponent<Text>();
+			var name_tmp = item.Find("Name_tmp").GetComponent<TextMeshProUGUI>();
+
 			name.text = MissionName;
+			name_tmp.text = MissionName;
 
 			item.GetComponent<MissionNode>().missioncls = misClass;
 

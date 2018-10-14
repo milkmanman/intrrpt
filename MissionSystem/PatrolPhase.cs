@@ -33,7 +33,7 @@ public class PatrolPhase : MissionPhase {
 		blankLogCount = Random.Range(1, 2);
 
 		for(int i = 1; i <= blankLogCount; i++){
-			PrintLog(mc, mc.AppliedHero.Name + " : I just walking to find something...");
+			PrintLog(mc, mc.AppliedHero.Name + " : 街をパトロール中...");
 			//yield return new WaitForSeconds (2f);
 			yield return new WaitForSeconds (0.5f);		
 		
@@ -49,7 +49,7 @@ public class PatrolPhase : MissionPhase {
 		_blankLogCount = Random.Range(1, 2);
 
 		for(int i = 1; i <= _blankLogCount; i++){
-			PrintLog(mc, mc.AppliedHero.Name + " : I just walking to find something...");
+			PrintLog(mc, mc.AppliedHero.Name + " : 街をパトロール中...");
 			//yield return new WaitForSeconds (2f);	
 			yield return new WaitForSeconds (0.5f);		
 		}
@@ -60,7 +60,7 @@ public class PatrolPhase : MissionPhase {
 		List<Line> rtnlist = new List<Line>();
 		Line l1 = new Line();
 		l1.who = mc.AppliedHero.Name;
-		l1.what = "I left some homework tonight.";
+		l1.what = "今日そういえば宿題やり残してきたんだよね...";
 		rtnlist.Add(l1);
 
 		return rtnlist;

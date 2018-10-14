@@ -51,7 +51,8 @@ public abstract class SingletonMonoBehaviourFast<T> : MonoBehaviour where T : Si
 			return true;
 		}
 
-		Destroy(this);
+		//Destroy(this);
+		Destroy(this.gameObject);
 		return false;
 	}
 }

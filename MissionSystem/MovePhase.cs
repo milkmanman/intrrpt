@@ -29,13 +29,13 @@ public class MovePhase : MissionPhase {
 			mc.PhaseMoveAction();
 		};
 
-		PrintLog(mc, mc.AppliedHero.Name + " : Moving to " + Destination);
+		PrintLog(mc, mc.AppliedHero.Name + " : " + Destination + "へ移動を開始");
 		int count = 0;
 
 		while (count <= 100){
 
 			if (count % 25 == 0){
-				PrintLog(mc, "Moving to " + Destination + ", at least " + count.ToString() + "%");
+				PrintLog(mc, Destination + "へ移動中, 到達率" + count.ToString() + "%");
 			}
 
 			yield return new WaitForSeconds (0.1f);  
@@ -44,7 +44,7 @@ public class MovePhase : MissionPhase {
 
 		yield return new WaitForSeconds (1.0f);  
 
-		PrintLog(mc, "Arrieved at " + Destination + ", " + BridgeMsg);
+		PrintLog(mc, Destination + "に到着。" + ", " + BridgeMsg);
 
 	}
 

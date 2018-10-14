@@ -29,7 +29,7 @@ public class MedicManager : SingletonMonoBehaviourFast<MedicManager> {
 	void Awake(){
 
 		LoadMedicMembers();
-		Debug.Log("load medic : " + MedicMembers[0].Name);
+		//Debug.Log("load medic : " + MedicMembers[0].Name);
 
 		slot1 = new MedicClass();
 		slot2 = new MedicClass();

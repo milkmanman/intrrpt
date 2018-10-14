@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Xml;
 using System.Linq;
-
+using TMPro;
 
 public class HeroUI : MonoBehaviour {
 
@@ -13,9 +13,9 @@ public class HeroUI : MonoBehaviour {
 
 	private HeroStatusClass selectedHero;
 
-	public Text Name;
-	public Text Costume;
-	public Text Heroism;
+	public TextMeshProUGUI Name_tmp; 
+	public TextMeshProUGUI Costume_tmp; 
+	public TextMeshProUGUI Heroism_tmp; 
 	public Image CostumeIcon;
 
 	public Image HPBar;
@@ -41,9 +41,10 @@ public class HeroUI : MonoBehaviour {
 		selectedHero = hero;
 
 		RefleshBars(hero);
-		Name.text = hero.Name;
-		Costume.text = costumeString(hero.Costume, hero.CostumeLv);
-		Heroism.text = "Heroism : " + hero.Heroism;
+		Name_tmp.text = hero.Name;
+		Costume_tmp.text = costumeString(hero.Costume, hero.CostumeLv);
+
+		Heroism_tmp.text = "Heroism : " + hero.Heroism;
 		Sprite test = Resources.Load<Sprite>("UI/CostumeIcons/" + hero.Costume);
 		if(test != null){
 			CostumeIcon.sprite = test;

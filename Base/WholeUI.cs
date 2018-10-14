@@ -8,15 +8,9 @@ public class WholeUI : MonoBehaviour {
 
 	public UIActivator UiActive;
 
-	public Text Cash;
-	public Text Intel;
-	public Text Tech;
-	public Text Medic;
-	public Text Tailor;
-
+	public TextMeshProUGUI ResourceField_tmp;
 	public TextMeshProUGUI HeroesField_tmp;
 
-	//public Text HeroesField;
 	public Text DevsField;
 
 
@@ -32,19 +26,21 @@ public class WholeUI : MonoBehaviour {
 	}
 
 	public void RefreshResource () {
+		string resourcestr = "";
 		int[] Resource = ResourceManager.Instance.HUD();
-		Cash.text = "CASH : " + Resource[0].ToString();
-		Intel.text = "INTEL : " + Resource[1].ToString();
-		Tech.text = "TECH : " + Resource[2].ToString();
-		Medic.text = "MEDIC : " + Resource[3].ToString();
-		Tailor.text = "TAILOR : " + Resource[4].ToString();
+		resourcestr += "CASH : " + Resource[0].ToString();
+		resourcestr += "\n" + "TECH : " + Resource[1].ToString();
+		resourcestr += "\n" + "MEDIC : " + Resource[2].ToString();
+
+		ResourceField_tmp.text = resourcestr;
 
 	}
 
 	public void RefreshHeroes(){
 
 		List<string> listhero = HeroManager.Instance.wholeUI();
-		string test = listhero[0];
+		string test = "";
+		if(listhero.Count >= 1) test += "\n" + listhero[0];
 		if(listhero.Count >= 2) test += "\n" + listhero[1];
 		if(listhero.Count >= 3) test += "\n" + listhero[2];
 		if(listhero.Count >= 4) test += "\n" + listhero[3];
@@ -52,20 +48,18 @@ public class WholeUI : MonoBehaviour {
 		if(listhero.Count >= 6) test += "\n" + listhero[5];
 
 		HeroesField_tmp.text = test;
-		//HeroesField.text = test;
-
 
 	}
 
-		public void RefreshDev(){
+	public void RefreshDev(){
 
 		List<string> listhero = FacilityManager.Instance.wholeUI();
-		string test = listhero[0];
-		if(listhero.Count >= 2) test += "\n" + listhero[1];
-		if(listhero.Count >= 3) test += "\n" + listhero[2];
-		if(listhero.Count >= 4) test += "\n" + listhero[3];
-		if(listhero.Count >= 5) test += "\n" + listhero[4];
-		if(listhero.Count >= 6) test += "\n" + listhero[5];
+
+		string test = "";
+
+		for(int i = 1; i <= listhero.Count; i++){
+			test += listhero[i - 1] + "\n";
+		}
 
 		DevsField.text = test;
 

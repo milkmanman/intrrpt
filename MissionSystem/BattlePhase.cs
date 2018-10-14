@@ -43,12 +43,12 @@ public class BattlePhase : MissionPhase {
 						PrintLog(missioncls, "!! LEFT " + (villainList.Count - (i + 1)).ToString() + "VILLANS !!");
 					} else {
 						RemainVillains = 0;
-						PrintLog(missioncls, "!! ALL VILLAINS REMOVED !!");
+						PrintLog(missioncls, "全ての敵を倒した");
 						missioncls.Success = true;
 
 					}
 				} else {
-					PrintLog(missioncls, "!! HERO DOWN !!");
+					PrintLog(missioncls, "ヒーローダウン！");
 					missioncls.Success = false;
 					//missioncls.ActiveFlg = false; //instant for free-roam
 
@@ -65,17 +65,17 @@ public class BattlePhase : MissionPhase {
 			int damageByVillain = (int)(villain.Atk * ((100 - hero.Def)/ 100) );
 			hero.Health = hero.Health - damageByVillain;
 			if(hero.Health > 0){
-				ret = "Villain attack! Hero's health remain : " + hero.Health.ToString();
+				ret = "敵の攻撃! ヒーロー残りHP : " + hero.Health.ToString();
 			} else {
-				ret = "Villain attack! Hero down!";
+				ret = "敵の攻撃! Hero down!";
 			}
 		} else {
 			int damageByVillain = (int)(hero.Atk * ((100 - villain.Def)/ 100) );
 			villain.Health = villain.Health - damageByVillain;
 			if(villain.Health > 0){
-				ret = "Hero attack! villain's health remain : " + villain.Health.ToString();
+				ret = "ヒーローの攻撃! 敵の残りHP : " + villain.Health.ToString();
 			} else {
-				ret = "Hero attack! Villain down!";
+				ret = "ヒーローの攻撃! 敵ダウン!";
 			}
 		}
 		return ret;
