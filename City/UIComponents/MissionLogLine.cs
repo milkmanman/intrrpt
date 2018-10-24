@@ -26,7 +26,8 @@ public class MissionLogLine : MonoBehaviour {
 		Transform lastChild = NewLogField.transform.GetChild(NewLogField.transform.childCount - 1);
 		TextMeshProUGUI logtext = lastChild.Find("PhaseLogs/TextMeshPro").GetComponent<TextMeshProUGUI>();
 
-		logtext.text = frc.PhaseList.First().Log;
+		//logtext.text = frc.PhaseList.First().Log;
+		logtext.text = frc.PhaseListHistory.Last().Log;
 	}
 
 }

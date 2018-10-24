@@ -38,9 +38,8 @@ public class BattlePhase : MissionPhase {
 				}
 				if(missioncls.AppliedHero.Health > 0){
 					RemainVillains = villainList.Count - (i + 1);
-					Debug.Log("remainvillain : " + RemainVillains);
 					if(villainList.Count - (i + 1) != 0){
-						PrintLog(missioncls, "!! LEFT " + (villainList.Count - (i + 1)).ToString() + "VILLANS !!");
+						PrintLog(missioncls, "<敵残り : " + (villainList.Count - (i + 1)).ToString() + "人>");
 					} else {
 						RemainVillains = 0;
 						PrintLog(missioncls, "全ての敵を倒した");
@@ -67,7 +66,7 @@ public class BattlePhase : MissionPhase {
 			if(hero.Health > 0){
 				ret = "敵の攻撃! ヒーロー残りHP : " + hero.Health.ToString();
 			} else {
-				ret = "敵の攻撃! Hero down!";
+				ret = "敵の攻撃! ヒーローダウン";
 			}
 		} else {
 			int damageByVillain = (int)(hero.Atk * ((100 - villain.Def)/ 100) );

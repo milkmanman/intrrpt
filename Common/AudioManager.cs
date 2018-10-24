@@ -28,7 +28,12 @@ public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 
 	void Awake () {
 		SceneController.Instance.ChangeScene += OnNewSceneLoaded;
+		OnNewSceneLoaded();
 		LoadSetting();
+	}
+
+	void OnDestroy () {
+		SceneController.Instance.ChangeScene -= OnNewSceneLoaded;
 	}
 
 	public void OnNewSceneLoaded(){
@@ -92,7 +97,7 @@ public class AudioManager : SingletonMonoBehaviourFast<AudioManager> {
 
 	private void PlayStartBGM(){
 		int bgmNo = Random.Range(0, StartBgmList.Count);
-		intervalSource.clip = BaseIntervalList[bgmNo];
+		intervalSource.clip = StartBgmList[bgmNo];
 		intervalSource.Play();
 	}
 

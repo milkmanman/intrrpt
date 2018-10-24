@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Xml;
+using TMPro;
 
 public class FacilityUI : MonoBehaviour {
 
@@ -12,10 +13,9 @@ public class FacilityUI : MonoBehaviour {
 	public GameObject DevedFacilityNodeField;
 	public GameObject FacilityDetailField;
 	public GameObject HUD;
-	public TextAsset FacilityDatabase;
 
 	public Text GranadeCount;
-	public Text Productivity;
+	public TextMeshProUGUI Productivity_tmp;
 
 	public List<GameObject> FacilityObject;
 
@@ -90,9 +90,12 @@ public class FacilityUI : MonoBehaviour {
 　			}
 		}
 
+		Debug.LogWarning("debug count : " + FacilityList.Count);
+
 		for(int i = 0; i<= FacilityList.Count - 1; i++){
 			var item = GameObject.Instantiate(prefab) as RectTransform;
 			FacilityClass fc = FacilityList[i];
+			Debug.LogWarning("Facility count count count : " + fc.Name);
 			item.SetParent(parent.transform, false);
 			item.GetComponent<FacilityNode>().facilitycls = fc;
 			item.GetComponent<FacilityNode>().RefleshDisplay();
@@ -137,8 +140,9 @@ public class FacilityUI : MonoBehaviour {
 		string cost;
 		//Debug.Log("xmldir : " + xmldir);
 
-		FacilityDetailField.transform.Find("Name").GetComponent<Text>().text = fc.Name;
-		FacilityDetailField.transform.Find("Description").GetComponent<Text>().text = fc.Description;
+		FacilityDetailField.transform.Find("Name_tmp").GetComponent<TextMeshProUGUI>().text = fc.Name;
+		FacilityDetailField.transform.Find("Description_tmp").GetComponent<TextMeshProUGUI>().text = fc.Description;
+
 		cost = fc.Cost1Type + " : " + fc.Cost1Value;
 		if(fc.Cost2Type != null){
 			cost += "\n" + fc.Cost2Type + " : " + fc.Cost2Value;
@@ -198,7 +202,8 @@ public class FacilityUI : MonoBehaviour {
 	}
 
 	private void RefreshProductivity(){
-		Productivity.text = FacilityManager.Instance.Productivity.ToString();
+		Productivity_tmp.text = FacilityManager.Instance.Productivity.ToString();
+
 	}
 
 }

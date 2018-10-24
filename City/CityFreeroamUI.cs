@@ -98,6 +98,8 @@ public class CityFreeroamUI : MonoBehaviour {
 			resultmsg = "Mission Fail";
 		}
 		Result.transform.Find("Result").gameObject.GetComponent<Text>().text = resultmsg;
+		Result.transform.Find("Result_tmp").gameObject.GetComponent<TextMeshProUGUI>().text = resultmsg;
+
 		Result.transform.Find("HP/Bar").gameObject.GetComponent<Image>().fillAmount = (float)frc.AppliedHero.Health / (float)frc.AppliedHero.MaxHealth;
 		Result.transform.Find("Reward/Reward1").gameObject.GetComponent<Text>().text =  "Reward Space 1";
 		Result.transform.Find("Reward/Reward2").gameObject.GetComponent<Text>().text = "Reward Space 2";

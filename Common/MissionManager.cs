@@ -187,7 +187,17 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
             frc.HoldResources[frc.MissionResourceType] = frc.MissionResourceValue + frc.HoldResources[frc.MissionResourceType];
         } else {
             frc.HoldResources.Add(frc.MissionResourceType, frc.MissionResourceValue);
+			Debug.LogWarning("resource : " + frc.PhaseList.Count());
 		}
+
+		//for reward log
+		frc.MissionLog = frc.MissionLog + "!! get reward !!" + "\n";
+		frc.PhaseListHistory.Last().Log = frc.PhaseListHistory.Last().Log + "!! get reward !!" + "\n";
+
+		if(frc.PushMissionLogAction != null){
+			frc.PushMissionLogAction();
+		};
+
 	}
 
 	private Dictionary<string, int> InstantiateVillainDic(XmlNode villainsNode){
@@ -294,6 +304,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				SetFreeroamPhase(frc);
 				yield return new WaitForSeconds (1.0f);
 				while(phaseList.Count > 0) {
+					Debug.LogWarning("phase count : " + phaseList.Count);
 				//for(int i = 0; i <= (phaseList.Count -1); i++){
 					//IEnumerator mission = phaseList[i].PhaseCoroutine(frc);
 					//frc.PhaseListHistory.Add(phaseList[i]);
@@ -302,7 +313,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					yield return StartCoroutine(mission);
 					yield return new WaitForSeconds (1.0f);
 					phaseList.RemoveAt(0);
-					Debug.LogWarning("ForLooping");
 					
 				}
 				countPatrol = 0;
@@ -322,6 +332,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					break;
 				} else {
 					setFreeroamHoldResource(frc);
+					//phaseList.First().PrintLog(frc, "")
 				}
 
 			}

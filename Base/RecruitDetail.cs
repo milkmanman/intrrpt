@@ -7,11 +7,10 @@ using TMPro;
 public class RecruitDetail : MonoBehaviour {
 
 	public GameObject HeroUI;
-	public Text Name;
 	public TextMeshProUGUI Name_tmp;
 	public Image Icon;
-	public Text Msg;
-	public Text Personality;
+	public TextMeshProUGUI Msg_tmp;
+	public TextMeshProUGUI Personality_tmp;
 	public Image Heroism;
 	public Image Motivation;
 	public Button ConfirmButton;
@@ -23,16 +22,15 @@ public class RecruitDetail : MonoBehaviour {
 
 
 	public void Reflesh(RecruitClass AC){
-		Name.text = AC.Name;
+
 		Name_tmp.text = AC.Name;
 
-
-		Msg.text = AC.Message;
+		Msg_tmp.text = AC.Message;
 		float HpPercentage = (float)(AC.Status1) / 100f;
 		Heroism.fillAmount = HpPercentage;
 		float MvPercentage = (float)(AC.Motivation) / 100f;
 		Motivation.fillAmount = MvPercentage;
-		Personality.text = "- " + AC.Personality1 + "\n- " + AC.Personality2;
+		Personality_tmp.text = "- " + AC.Personality1 + "\n- " + AC.Personality2;
 
 	}
 

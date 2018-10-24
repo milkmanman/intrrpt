@@ -21,36 +21,36 @@ public class BackPhase : MissionPhase  {
 
 		if(doesSendMedic == false){
 
-			PrintLog(mc, "Base : Come back hero.");
+			PrintLog(mc, "Base : 終了だ。戻ってきてくれ。");
 			yield return new WaitForSeconds (1.5f);
 
-			PrintLog(mc, "Hero : Okay. just i miss you.");
+			PrintLog(mc, mc.AppliedHero.Name + " : 了解。寂しかったよ");
 			yield return new WaitForSeconds (1.5f);  
 
-			PrintLog(mc, "Hero : i'm kidding. so I back to the base.");
+			PrintLog(mc, mc.AppliedHero.Name + " : 冗談だよ。今から向かう。");
 			yield return new WaitForSeconds (4.0f);  
 
-			PrintLog(mc, "Hero : Home sweet home!");
+			PrintLog(mc, mc.AppliedHero.Name +　"ただいま！");
 			yield return new WaitForSeconds (1.5f);  
 
 		} else {
 
-			PrintLog(mc, "Medic : I rescue you hero.");
+			PrintLog(mc, "Medic : 大丈夫か！今から助けに行く");
 			yield return new WaitForSeconds (1.5f);
 
-			PrintLog(mc, "Medic : Send your location. I'll go ASAP.");
+			PrintLog(mc, "Medic : GPS情報を送信してくれ。急いで向かう");
 			yield return new WaitForSeconds (1.5f);
 
-			PrintLog(mc, "Hero : Thanks. Now, I send GPS Data.");
+			PrintLog(mc, mc.AppliedHero.Name + " : ありがとう。。今、位置情報を送ったよ");
 			yield return new WaitForSeconds (1.5f);
 
-			PrintLog(mc, "Medic : OK. Patient.");
+			PrintLog(mc, "Medic : 了解。耐えていてくれ。");
 			yield return new WaitForSeconds (1.5f);
 
-			PrintLog(mc, "Medic : Arrived. Back to Base.");
+			PrintLog(mc, "Medic : 到着した。ベースに戻るぞ。");
 			yield return new WaitForSeconds (3.0f);
 
-			PrintLog(mc, "Hero Rescued. Mission Completed.");
+			PrintLog(mc, "ヒーロー救出完了。フリーローム終了");
 			yield return new WaitForSeconds (1.5f);
 
 		}

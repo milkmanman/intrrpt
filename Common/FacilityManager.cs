@@ -67,7 +67,16 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 		//FacilityPhases.Add("drone", 1);
 		//FacilityPhases.Add("jumpingdrone", 1);
 		//GeneralHelper.Instance.SaveDict<string, int> ("FacilityPhases", FacilityPhases);
-		FacilityPhases = GeneralHelper.Instance.LoadDict<string, int>("FacilityPhases");
+		FacilityPhases = GeneralHelper.Instance.LoadDict<string, int>("DevelopPhases");
+		if(FacilityPhases.Count == 0) {
+			SetFirstFacilityList();
+			Debug.Log("Facility SaveData Missing");
+			//drone : 1 jumpingdrone : 1
+		} else {
+			foreach(KeyValuePair<string, int> item in FacilityPhases) {
+				Debug.Log("kkeeeyy  " + item.Key + ":" + item.Value.ToString());
+			}
+		}
 
 		SetFacilityList();
 		//InstantiateFacility();
@@ -100,14 +109,20 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 
 		Debug.Log("Productivity : " + Productivity.ToString());
 
-		
-
 	}
 
 	public void ChangeScene(){
 		if(SceneController.Instance.CurrentScene == "Base"){
 			InstantiateFacility();
 		}
+	}
+
+	public void SetFirstFacilityList(){
+		Dictionary<string, int> DevelopPhases = new Dictionary<string, int> ();
+		DevelopPhases.Add("drone", 0);
+
+		GeneralHelper.Instance.SaveDict<string, int>("DevelopPhases", DevelopPhases);
+		FacilityPhases = DevelopPhases;
 	}
 
 	public void SetFacilityList(){
@@ -141,7 +156,7 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 	public void SetOnetimeBuffList(Dictionary<string, bool> test){
 		foreach(KeyValuePair<string, bool> pair in test){
 			if(pair.Value == true){
-				Debug.Log (pair.Key + " " + pair.Value);
+				Debug.Log ("one time buff : " + pair.Key + " " + pair.Value);
 				string onetime = pair.Key; //instant for flash granade
 				string onetimedir = "//" + onetime;
 				FacilityClass onetimeFc = setFacilityClass(onetimedir);
@@ -218,8 +233,6 @@ public class FacilityManager : SingletonMonoBehaviourFast<FacilityManager> {
 				Debug.Log("instantiate - " + DevedFacilityList[i - 1].Category + " : " + DevedFacilityList[i - 1].Phase); // instantiate drone : 0
 			}
 
-		} else{
-			Debug.LogWarning("dojfsajfiew");
 		}
 
 	}

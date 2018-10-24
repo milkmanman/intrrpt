@@ -37,8 +37,12 @@ public class OptionUI : MonoBehaviour {
 	}
 
 	public void OnBackButtonClicked(){
-		Debug.Log("testtestestset");
-		GameObject.Find("GUI").GetComponent<UIActivator>().Activator(0);
+		if(SceneController.Instance.CurrentScene == "Base"){
+			Debug.Log("testtestestset");
+			GameObject.Find("GUI").GetComponent<UIActivator>().Activator(0);
+		} else if(SceneController.Instance.CurrentScene == "Start"){
+			this.gameObject.GetComponent<Canvas>().enabled = true;	
+		}	
 	}
 
 }

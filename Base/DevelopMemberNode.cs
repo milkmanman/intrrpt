@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DevelopMemberNode : MonoBehaviour {
 
 	public DevelopMemberClass dev;
 
-	public Text Name;
+	public TextMeshProUGUI Name_tmp; 
 	public Image LvBar;
 	public Image MotivBar;
 
 	public void RefleshNode(){
 
-		Name.text = dev.Name;
+		Name_tmp.text = dev.Name;
 
 		float LevelPercentage = (float)(dev.SkillLv) / 30f;
 		LvBar.fillAmount = LevelPercentage;
