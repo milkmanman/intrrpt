@@ -15,6 +15,7 @@ public class FreeRoamClass : BaseMissionClass {
 	private int missionResourceValue;
 	private Dictionary<string, int> holdResources;
 
+
 	/*
 	public HeroStatusClass AppliedHero{
 		get {return appliedHero;}
@@ -56,5 +57,6 @@ public class FreeRoamClass : BaseMissionClass {
 		get {return holdResources;}
 		set {holdResources = value;}
 	}
+
 
 }

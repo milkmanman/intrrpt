@@ -253,6 +253,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	private IEnumerator FreeroamProgress (FreeRoamClass frc) {
 
 		frc.ActiveFlg = true;
+		frc.FailtureFlag = false;
 		frc.IsBackFlag = false;
 		//mc.Success = false;
 		frc.PhaseList = new List<MissionPhase>();
@@ -275,6 +276,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				yield return new WaitForSeconds (1.0f);
 
 				frc.ActiveFlg = false;
+				
 				break;
 			}
 
@@ -330,6 +332,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					yield return StartCoroutine(back);
 					yield return new WaitForSeconds (1.0f);
 					break;
+				} else if(frc.AppliedHero.Health > 0 && frc.FailtureFlag == true) {
+					frc.FailtureFlag = false;
+					//setFreeroamHoldResource(frc);
+					//phaseList.First().PrintLog(frc, "")
 				} else {
 					setFreeroamHoldResource(frc);
 					//phaseList.First().PrintLog(frc, "")
@@ -425,6 +431,13 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					battle.villainList = AddVillanByDict(villaindir);					
 					rtnList.Add(battle);
 
+					break;
+
+				case "Search" :
+					SearchPhase search = new SearchPhase();
+					XmlNode srch1 = node0.SelectSingleNode("./phase[@id=" + i + "]/object");
+					search.Object = srch1.InnerText;
+					rtnList.Add(search);
 					break;
 
 				default :
