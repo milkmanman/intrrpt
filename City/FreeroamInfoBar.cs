@@ -7,6 +7,7 @@ public class FreeroamInfoBar : MonoBehaviour {
 
 	public FreeRoamClass frc;
 	public GameObject MissionUI;
+	public Text BarText;
 
 	void Start(){
 		this.transform.Find("Text").gameObject.GetComponent<Button>().onClick.AddListener(delegate{MissionUI.GetComponent<CityFreeroamUI>().DisplayMissionInfo(frc);});

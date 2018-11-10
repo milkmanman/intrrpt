@@ -7,6 +7,8 @@ using TMPro;
 
 public class CityFreeroamUI : MonoBehaviour {
 
+	public UIActivatorCity UiActive;
+
 	public Text missionLog;
 	private Text HeroName;
 	public GameObject HeroStatus;
@@ -23,6 +25,21 @@ public class CityFreeroamUI : MonoBehaviour {
 	public MissionLogLine mll;
 
 	void Awake () {
+
+		HeroName = HeroStatus.transform.Find("HeroName").GetComponent<Text>();
+		HealthBar = HeroStatus.transform.Find("Health/Bar").GetComponent<Image>();
+		HealthBar.fillAmount = 1.0f;
+		HealthText = HeroStatus.transform.Find("Health/Text").GetComponent<Text>();
+		ComeBackButton.onClick.AddListener(delegate{OnClickComeBack();});
+
+		/* if(MissionManager.Instance.FreeRoamList[0] != null){
+			frc = MissionManager.Instance.FreeRoamList[0];
+			mll.frc = MissionManager.Instance.FreeRoamList[0];
+		}*/
+
+		frc = null;
+
+	/* 
 		if(MissionManager.Instance.FreeRoamList[0] != null){
 			Debug.Log("FreeRoamList[0]" + " - isnotnull");
 			frc = MissionManager.Instance.FreeRoamList[0];
@@ -30,28 +47,47 @@ public class CityFreeroamUI : MonoBehaviour {
 			HealthBar = HeroStatus.transform.Find("Health/Bar").GetComponent<Image>();
 			HealthBar.fillAmount = 1.0f;
 			HealthText = HeroStatus.transform.Find("Health/Text").GetComponent<Text>();
-			HeroName.text = frc.AppliedHero.Name;
-			maxHealth = frc.AppliedHero.MaxHealth;
+			//HeroName.text = frc.AppliedHero.Name;
+			//maxHealth = frc.AppliedHero.MaxHealth;
 
 			mll.frc = MissionManager.Instance.FreeRoamList[0];
-			frc.PhaseMoveAction += mll.RefreshNewMissionLog;
-			frc.PushMissionLogAction += mll.RefleshLog;
+			//frc.PhaseMoveAction += mll.RefreshNewMissionLog;
+			//frc.PushMissionLogAction += mll.RefleshLog;
 
 			ComeBackButton.onClick.AddListener(delegate{OnClickComeBack();});
 		}
-
+	*/
 	}
 
 	public void DisplayMissionInfo(FreeRoamClass setfrc){
-		frc = setfrc;
-		this.gameObject.SetActive(true);
+		//frc = setfrc;
+		RefleshFrc(setfrc);
+		HeroName.text = frc.AppliedHero.Name;
+		maxHealth = frc.AppliedHero.MaxHealth;
+		mll.frc = frc;
+		mll.InitMissionLog();
+		//this.gameObject.SetActive(true);
+		this.gameObject.GetComponent<Canvas>().enabled = true;
 		this.transform.Find("MissionInfo").gameObject.SetActive(true);
 		this.transform.Find("MissionResult").gameObject.SetActive(false);
 		Debug.Log(setfrc.AppliedHero.Name + " : setfrc");
 		HeroName.text = setfrc.AppliedHero.Name;
 		missionLog.text = setfrc.MissionLog;
-		IEnumerator routine = RefleshDisplay(setfrc);
-		StartCoroutine(routine);
+		//IEnumerator routine = RefleshDisplay(setfrc);
+		//StartCoroutine(routine);
+	}
+
+	private void RefleshFrc(FreeRoamClass setfrc){
+		if(frc != null){
+			frc.PhaseMoveAction -= mll.RefreshNewMissionLog;
+			frc.PushMissionLogAction -= mll.RefleshLog;
+			frc.PushMissionLogAction -= RefleshDisplays;
+		}
+		frc = setfrc;
+
+		frc.PhaseMoveAction += mll.RefreshNewMissionLog;
+		frc.PushMissionLogAction += mll.RefleshLog;
+		frc.PushMissionLogAction += RefleshDisplays;
 	}
 
 	IEnumerator RefleshDisplay (FreeRoamClass mctest) {
@@ -64,6 +100,16 @@ public class CityFreeroamUI : MonoBehaviour {
 			DisplayCurrentMission();
 		}
 		DisplayButton();
+	}
+
+	public void RefleshDisplays () {
+		if(frc != null){
+			missionLog.text = frc.MissionLog;
+			HealthBar.fillAmount = (float)frc.AppliedHero.Health / (float)frc.AppliedHero.MaxHealth;
+			HealthText.text = "Health : " + frc.AppliedHero.Health.ToString() + "/" + frc.AppliedHero.MaxHealth.ToString();
+			DisplayResource();
+			DisplayCurrentMission();
+		}
 	}
 
 	private void DisplayResource(){

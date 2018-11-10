@@ -240,6 +240,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 	public void StartFreeRoam(HeroStatusClass hc){
 		Debug.Log("StartFreeRoam");
+		hc.Status = 1;
 		FreeRoamClass frc = new FreeRoamClass();
 		frc.AppliedHero = hc;
 		HeroManager.Instance.SetParamsByCostume(hc);
@@ -276,6 +277,9 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 				yield return new WaitForSeconds (1.0f);
 
 				frc.ActiveFlg = false;
+				if(frc.FinishMissionAction != null){
+					frc.FinishMissionAction();
+				};
 				
 				break;
 			}
@@ -305,8 +309,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 				SetFreeroamPhase(frc);
 				yield return new WaitForSeconds (1.0f);
-				while(phaseList.Count > 0) {
-					Debug.LogWarning("phase count : " + phaseList.Count);
+				while(phaseList.Count > 0　&& frc.AppliedHero.Health > 0 && frc.FailtureFlag == false) {
 				//for(int i = 0; i <= (phaseList.Count -1); i++){
 					//IEnumerator mission = phaseList[i].PhaseCoroutine(frc);
 					//frc.PhaseListHistory.Add(phaseList[i]);
@@ -348,6 +351,9 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		countPhases++;
 		}
 		frc.ActiveFlg = false;
+		if(frc.FinishMissionAction != null){
+			frc.FinishMissionAction();
+		};
 		/*while(true){
 			RestPhase pp = new RestPhase();
 			//PatrolPhase pp = new PatrolPhase();
@@ -450,6 +456,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 	public void FinishFreeroam(FreeRoamClass frc){
 		ResourceManager.Instance.VulkResource(frc.HoldResources);
+		frc.AppliedHero.Status = 0;
 	}
 
 	private RestPhase setRestPhase(){
@@ -494,6 +501,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	public void StartMission(HeroStatusClass hc, MissionClass missioncls){
 
 		int i = 1;
+		hc.Status = 1;
 
 		if(MissionList.Count == 0){
 			missioncls.AppliedHero = hc;

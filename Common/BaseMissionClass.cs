@@ -14,6 +14,7 @@ public class BaseMissionClass {
 	private string missionLog;
 	private Action phaseMoveAction;
 	private Action pushMissionLogAction;
+	private Action finishMissionAction;
 	private bool failtureFlag;
 
 	public int Type{
@@ -59,6 +60,11 @@ public class BaseMissionClass {
 	public Action PushMissionLogAction{
 		get {return pushMissionLogAction;}
 		set {pushMissionLogAction = value;}
+	}
+
+	public Action FinishMissionAction{
+		get {return finishMissionAction;}
+		set {finishMissionAction = value;}
 	}
 
 	public bool FailtureFlag{

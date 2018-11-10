@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class testInstantiate : MonoBehaviour {
 
+	public UIActivatorCity UIActivator;
 	public GameObject prefabMIB;
 	public GameObject prefabFRIB;
 
@@ -28,8 +29,10 @@ public class testInstantiate : MonoBehaviour {
 		for(int i = 1; i <= MissionManager.Instance.FreeRoamList.Count; i++){
 			if(MissionManager.Instance.FreeRoamList[i-1] != null){
 				GameObject heroObj = Instantiate(prefabFRIB, new Vector3(i * (-100), 80, 0), Quaternion.identity);
-				heroObj.GetComponent<FreeroamInfoBar>().frc = MissionManager.Instance.FreeRoamList[0];
+				heroObj.GetComponent<FreeroamInfoBar>().frc = MissionManager.Instance.FreeRoamList[i - 1];
 				heroObj.GetComponent<FreeroamInfoBar>().MissionUI = GameObject.Find("GUI").transform.Find("FreeroamUI").gameObject;
+				heroObj.GetComponent<FreeroamInfoBar>().BarText.text = MissionManager.Instance.FreeRoamList[i - 1].AppliedHero.Name;
+
 			}
 		}
 

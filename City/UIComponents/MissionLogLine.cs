@@ -11,6 +11,17 @@ public class MissionLogLine : MonoBehaviour {
 	public GameObject NewLogField;
 	public RectTransform NewLogNode;
 
+	public void InitMissionLog(){
+		foreach ( Transform n in NewLogField.transform ) {
+			GameObject.Destroy(n.gameObject);
+		}
+		for(int i = 0; (frc.PhaseListHistory.Count() - 1) >= i; i++){
+			var item = GameObject.Instantiate(NewLogNode) as RectTransform;
+			item.SetParent(NewLogField.transform, false);
+			item.GetComponent<PhaseLogNode>().Refresh(frc.PhaseListHistory[i]);
+		}
+	}
+
 	public void RefreshNewMissionLog(){
 		foreach ( Transform n in NewLogField.transform ) {
 			GameObject.Destroy(n.gameObject);
