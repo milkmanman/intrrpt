@@ -18,8 +18,11 @@ public class MenuUI : MonoBehaviour {
 
 	private void SetButtons(){
 		NewGame.onClick.AddListener(delegate{Debug.Log("new game");});
+		NewGame.onClick.AddListener(delegate{AudioManager.Instance.PlaySE(4);});
 		NewGame.onClick.AddListener(delegate{LoadCityScene();});
 		Option.onClick.AddListener(delegate{ShowOptionUI();});
+		Option.onClick.AddListener(delegate{AudioManager.Instance.PlaySE(4);});
+
 		Exit.onClick.AddListener(delegate{Application.Quit();});
 
 	}

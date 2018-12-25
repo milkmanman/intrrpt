@@ -8,11 +8,14 @@ public class testInstantiate : MonoBehaviour {
 	public GameObject prefabMIB;
 	public GameObject prefabFRIB;
 
+	public List<GameObject> FRIBs;
+
 	// Use this for initialization
 	void Start () {
 		string scene = Application.loadedLevelName;
 		Debug.Log(scene);
 		if(scene == "City"){
+		FRIBs = new List<GameObject>();
 		InstantiateInfobar();
 		}
 	}
@@ -29,27 +32,26 @@ public class testInstantiate : MonoBehaviour {
 		for(int i = 1; i <= MissionManager.Instance.FreeRoamList.Count; i++){
 			if(MissionManager.Instance.FreeRoamList[i-1] != null){
 				GameObject heroObj = Instantiate(prefabFRIB, new Vector3(i * (-100), 80, 0), Quaternion.identity);
+				heroObj.transform.parent = GameObject.Find("InfoBars").transform;
+				heroObj.name = MissionManager.Instance.FreeRoamList[i - 1].AppliedHero.Name + ":freeroam";
 				heroObj.GetComponent<FreeroamInfoBar>().frc = MissionManager.Instance.FreeRoamList[i - 1];
 				heroObj.GetComponent<FreeroamInfoBar>().MissionUI = GameObject.Find("GUI").transform.Find("FreeroamUI").gameObject;
 				heroObj.GetComponent<FreeroamInfoBar>().BarText.text = MissionManager.Instance.FreeRoamList[i - 1].AppliedHero.Name;
-
+				FRIBs.Add(heroObj);
 			}
 		}
 
-		/*if(MissionManager.Instance.MissionList[0] != null){
-		//if(MissionManager.Instance.slot1 != null){
+	}
 
-			GameObject heroObj = Instantiate(prefabMIB, new Vector3(-10, 40, 0), Quaternion.identity);
-			heroObj.GetComponent<MissionInfoBar>().mc = MissionManager.Instance.MissionList[0];
-			heroObj.GetComponent<MissionInfoBar>().MissionUI = GameObject.Find("GUI").transform.Find("MissionUI").gameObject;
-		}*/
-		/*if (MissionManager.Instance.slot2.ActiveFlg != false) {
-			Debug.Log("slot 2 : " + MissionManager.Instance.slot2);
-			GameObject heroObj2 = Instantiate(prefabMIB, new Vector3(40, 40, 0), Quaternion.identity);
-			heroObj2.GetComponent<MissionInfoBar>().mc = MissionManager.Instance.slot2;
-			heroObj2.GetComponent<MissionInfoBar>().MissionUI = GameObject.Find("GUI").transform.Find("MissionUI").gameObject;
-		}*/
-
+	public void DeleteInfobar(FreeRoamClass frc){
+		for(int i = 0; i < FRIBs.Count; i++) {
+			FreeRoamClass BarsFrm = FRIBs[i].GetComponent<FreeroamInfoBar>().frc;
+			if(BarsFrm == frc){
+				Destroy(FRIBs[i]);
+				Debug.LogWarning("Destroy!!!!");
+				FRIBs.Remove(FRIBs[i]);
+			}
+		}
 	}
 
 }

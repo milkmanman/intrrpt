@@ -9,6 +9,8 @@ public class SearchPhase : MissionPhase {
 	public string Object;
 	public string BetweenLine;
 	public int Difficulty;
+	public string FindMsg;
+
 
 	public override string Type {
 		get{ return type; }
@@ -36,6 +38,12 @@ public class SearchPhase : MissionPhase {
 				break;
 			}else if(Random.Range(12, 20) <= 10){
 				PrintLog(mc, mc.AppliedHero.Name + " : " + Object + "を発見！");
+
+				if(FindMsg != null){
+					yield return new WaitForSeconds (2.0f);  
+					PrintLog(mc, mc.AppliedHero.Name + " : " + FindMsg);
+				}
+
 				break;
 			} else {
 				PrintLog(mc, mc.AppliedHero.Name + " : " + Object + "を捜索中");

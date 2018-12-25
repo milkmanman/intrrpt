@@ -15,7 +15,8 @@ public class CityMissionUI : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		if(MissionManager.Instance.MissionList[0] != null){
+		/* 
+		if(MissionManager.Instance.MissionList != null && MissionManager.Instance.MissionList[0] != null){
 			Debug.Log("MissionList[0]" + " - isnotnull");
 			Debug.Log(MissionManager.Instance.MissionList[0].GetType());
 			mc = MissionManager.Instance.MissionList[0];
@@ -25,6 +26,7 @@ public class CityMissionUI : MonoBehaviour {
 			HeroName.text = mc.AppliedHero.Name;
 			maxHealth = mc.AppliedHero.MaxHealth;
 		}
+		*/
 
 		/*if(mc != null){
 			battleLog.text = MissionManager.Instance.slot1.CombatLog;

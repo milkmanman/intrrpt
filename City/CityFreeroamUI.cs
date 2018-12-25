@@ -14,6 +14,7 @@ public class CityFreeroamUI : MonoBehaviour {
 	public GameObject HeroStatus;
 	private int maxHealth;
 	private Image HealthBar;
+	private Image ExpBar;
 	private Text HealthText;
 	public GameObject button;
 	public Button ComeBackButton;
@@ -29,6 +30,8 @@ public class CityFreeroamUI : MonoBehaviour {
 		HeroName = HeroStatus.transform.Find("HeroName").GetComponent<Text>();
 		HealthBar = HeroStatus.transform.Find("Health/Bar").GetComponent<Image>();
 		HealthBar.fillAmount = 1.0f;
+		ExpBar = HeroStatus.transform.Find("Exp/Bar").GetComponent<Image>();
+		ExpBar.fillAmount = 0.0f;
 		HealthText = HeroStatus.transform.Find("Health/Text").GetComponent<Text>();
 		ComeBackButton.onClick.AddListener(delegate{OnClickComeBack();});
 
@@ -82,30 +85,36 @@ public class CityFreeroamUI : MonoBehaviour {
 			frc.PhaseMoveAction -= mll.RefreshNewMissionLog;
 			frc.PushMissionLogAction -= mll.RefleshLog;
 			frc.PushMissionLogAction -= RefleshDisplays;
+			frc.FinishMissionAction -= DisplayButton;
 		}
 		frc = setfrc;
 
 		frc.PhaseMoveAction += mll.RefreshNewMissionLog;
 		frc.PushMissionLogAction += mll.RefleshLog;
 		frc.PushMissionLogAction += RefleshDisplays;
+		frc.FinishMissionAction += DisplayButton;
+
 	}
 
 	IEnumerator RefleshDisplay (FreeRoamClass mctest) {
 		while(mctest.ActiveFlg == true){
 			missionLog.text = mctest.MissionLog;
 			HealthBar.fillAmount = (float)mctest.AppliedHero.Health / (float)mctest.AppliedHero.MaxHealth;
+			ExpBar.fillAmount = (float)(mctest.AppliedHero.Exp) / 500f;
+
 			HealthText.text = "Health : " + mctest.AppliedHero.Health.ToString() + "/" + mctest.AppliedHero.MaxHealth.ToString();
 			yield return new WaitForSeconds(1);
 			DisplayResource();
 			DisplayCurrentMission();
 		}
-		DisplayButton();
 	}
 
 	public void RefleshDisplays () {
 		if(frc != null){
 			missionLog.text = frc.MissionLog;
 			HealthBar.fillAmount = (float)frc.AppliedHero.Health / (float)frc.AppliedHero.MaxHealth;
+			ExpBar.fillAmount = (float)(frc.AppliedHero.Exp) / 500f;
+
 			HealthText.text = "Health : " + frc.AppliedHero.Health.ToString() + "/" + frc.AppliedHero.MaxHealth.ToString();
 			DisplayResource();
 			DisplayCurrentMission();
@@ -150,6 +159,12 @@ public class CityFreeroamUI : MonoBehaviour {
 		Result.transform.Find("Reward/Reward1").gameObject.GetComponent<Text>().text =  "Reward Space 1";
 		Result.transform.Find("Reward/Reward2").gameObject.GetComponent<Text>().text = "Reward Space 2";
 
+		Result.transform.Find("Reward/Reward2").gameObject.GetComponent<Text>().text = "Reward Space 2";
+
+		Result.transform.Find("EXP_tmp").gameObject.GetComponent<TextMeshProUGUI>().text = "Increase EXP : " + frc.SumIncreaseExp;
+
+		GameObject instantiate = GameObject.Find("Instantiate").gameObject;
+		instantiate.GetComponent<testInstantiate>().DeleteInfobar(frc);
 		MissionManager.Instance.FinishFreeroam(frc);
 
 	}
@@ -160,7 +175,6 @@ public class CityFreeroamUI : MonoBehaviour {
 
 	private void OnClickComeBack(){
 		frc.IsBackFlag = true;
-		Debug.LogWarning("Push Back Button");
 	}
 
 }

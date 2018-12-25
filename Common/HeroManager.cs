@@ -74,6 +74,11 @@ public class HeroManager : SingletonMonoBehaviourFast<HeroManager> {
 			Hero.Costume = "N/A";
 			Hero.CostumeLv = 1;
 		}
+		if(PlayerPrefs.GetInt (heronumber + ".Exp") != 0){
+			Hero.Exp = PlayerPrefs.GetInt (heronumber + ".Exp");
+		} else {
+			Debug.LogWarning("exp is 0");
+		}
 		//Hero.Costume = PlayerPrefs.GetString (heronumber + ".Costume");
 		//Hero.CostumeLv = PlayerPrefs.GetInt (heronumber + ".CostumeLv");
 		Hero.Heroism = PlayerPrefs.GetInt (heronumber + ".Heroism");

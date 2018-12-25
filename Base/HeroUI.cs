@@ -18,9 +18,11 @@ public class HeroUI : MonoBehaviour {
 	public TextMeshProUGUI Heroism_tmp; 
 	public Image CostumeIcon;
 
+	public Image EXPBar;
 	public Image HPBar;
 	public Image ATKBar;
 	public Image DEFBar;
+	public TextMeshProUGUI Lv_tmp;
 
 	 public ToggleGroup costumeToggleGroup;
 
@@ -42,6 +44,7 @@ public class HeroUI : MonoBehaviour {
 
 		RefleshBars(hero);
 		Name_tmp.text = hero.Name;
+		Lv_tmp.text = "Lv." + hero.Lv.ToString();
 		Costume_tmp.text = costumeString(hero.Costume, hero.CostumeLv);
 
 		Heroism_tmp.text = "Heroism : " + hero.Heroism;
@@ -56,6 +59,11 @@ public class HeroUI : MonoBehaviour {
 
 	public void RefleshBars(HeroStatusClass hero){
 
+		if(hero.Exp != null) {
+			float ExpPercentage = (float)(hero.Exp) / 500f;
+			EXPBar.fillAmount = ExpPercentage;
+		}
+
 		if(hero.Costume == null){
 
 			HPBar.fillAmount = 0.1f;
@@ -67,7 +75,6 @@ public class HeroUI : MonoBehaviour {
 
 			float HpPercentage = (float)(hero.Health) / 500f;
 			HPBar.fillAmount = HpPercentage;
-			Debug.Log("Reflesh hero health : " + hero.Health.ToString());
 
 			float AtkPercentage = hero.Atk / 150f;
 			ATKBar.fillAmount = AtkPercentage;
@@ -110,36 +117,5 @@ public class HeroUI : MonoBehaviour {
 		}
 		return ret;
 	}
-
-/*	public void RefreshRecruits(){
-		HeroManager.Instance.RefleshRecruitList();
-		foreach (Transform item in RecruitField.transform) {
-			Destroy(item.gameObject);
-		}
-		for(int i = 1; i <= 4; i++){
-				var item = GameObject.Instantiate(RecruitNodePrefab) as RectTransform;
-				item.SetParent(RecruitField.transform, false);
-				ApplicantClass test =  new ApplicantClass();
-				test = HeroManager.Instance.RecruitHeroList[i-1];
-				item.GetComponent<RecruitNode>().Hero = test;
-				item.GetComponent<RecruitNode>().RefleshRecruit();
-				Button button = item.GetComponent<RecruitNode>().SelectButton;
-				RecruitNode node = item.GetComponent<RecruitNode>();
-				button.onClick.AddListener(delegate{HeroManager.Instance.HoldApplicant = test;});
-				button.onClick.AddListener(delegate{ShowApplicantDetail();});
-		}
-	}
-
-	public void ShowApplicantDetail(){
-		GameObject Hiring = HiringField.transform.Find("Detail").gameObject;
-		Hiring.SetActive(true);
-		Hiring.GetComponent<RecruitDetail>().Reflesh(HeroManager.Instance.HoldApplicant);
-	}
-
-	public void CloseApplicantDetail(){
-		GameObject Hiring = HiringField.transform.Find("Detail").gameObject;
-		Hiring.SetActive(false);
-	}*/
-
 
 }

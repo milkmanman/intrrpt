@@ -6,6 +6,10 @@ using System;
 using System.Xml;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
+using SimpleJSON;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
@@ -23,6 +27,8 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	public List<IEnumerator> routineList;
 	public List<MissionClass> MissionList;
 	public List<FreeRoamClass> FreeRoamList;
+
+	public TextAsset FreeroamDBJson;
 
 
 	void Awake () {
@@ -47,6 +53,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		selectableMissionClassList = setSelectableMissionList(selectableMission);
 		Debug.Log(selectableMissionClassList.Count);
 
+		//SetFreeroamPhaseFromJson();
 	}
 
 
@@ -200,11 +207,32 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 	}
 
+	 private void setFreeroamExp(FreeRoamClass frc){
+		//frc.AppliedHero.Exp = frc.AppliedHero.Exp + 10;
+		frc.AppliedHero.Exp = frc.AppliedHero.Exp + frc.MissionExp;
+		frc.MissionLog = frc.MissionLog + "!! get exp !!" + "\n";
+		frc.PhaseListHistory.Last().Log = frc.PhaseListHistory.Last().Log + "!! get exp !!" + "\n";
+		frc.SumIncreaseExp += frc.MissionExp;
+		Debug.LogWarning("SumIncreaseExp : " + frc.SumIncreaseExp.ToString());
+	}
+
 	private Dictionary<string, int> InstantiateVillainDic(XmlNode villainsNode){
 		Dictionary<string, int> ret = new Dictionary<string, int> ();
 		foreach(XmlNode node in villainsNode.ChildNodes){
 			ret.Add(node.Name, int.Parse(node.InnerText));
 		}
+		return ret;
+	}
+
+	private Dictionary<string, int> InstantiateVillainDicJson(JArray villainsJArray){
+		Dictionary<string, int> ret = new Dictionary<string, int> ();
+
+		foreach (JObject jobj in villainsJArray) {
+			string villainType = (string)jobj["type"];
+			int villainCount = (int)jobj["count"];
+			ret.Add(villainType, villainCount);
+		}
+
 		return ret;
 	}
 
@@ -307,7 +335,8 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 			} else {
 
-				SetFreeroamPhase(frc);
+				//SetFreeroamPhase(frc);
+				SetFreeroamPhaseFromJson(frc);
 				yield return new WaitForSeconds (1.0f);
 				while(phaseList.Count > 0　&& frc.AppliedHero.Health > 0 && frc.FailtureFlag == false) {
 				//for(int i = 0; i <= (phaseList.Count -1); i++){
@@ -337,11 +366,11 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					break;
 				} else if(frc.AppliedHero.Health > 0 && frc.FailtureFlag == true) {
 					frc.FailtureFlag = false;
-					//setFreeroamHoldResource(frc);
-					//phaseList.First().PrintLog(frc, "")
+
 				} else {
+
+					//setFreeroamExp(frc);
 					setFreeroamHoldResource(frc);
-					//phaseList.First().PrintLog(frc, "")
 				}
 
 			}
@@ -454,9 +483,89 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		}
 	}
 
+	public void SetFreeroamPhaseFromJson(FreeRoamClass frc){
+		List<MissionPhase> rtnList = frc.PhaseList;
+
+		JObject jdb = (JObject)JsonConvert.DeserializeObject(FreeroamDBJson.text);
+        JArray jarr = (JArray)jdb["missions"];
+		int missionCount = jarr.Count;
+		int randomCount = UnityEngine.Random.Range(1, missionCount + 1);
+		
+		JObject item = (JObject)jarr[randomCount - 1];
+		Debug.Log(item["rewardType"] + " : " + item["rewardValue"]);
+
+		frc.MissionResourceType = (string)item["rewardType"];
+		frc.MissionResourceValue = (int)item["rewardValue"];
+
+		frc.MissionExp = (int)item["exp"];
+
+		JArray phase_item_count = (JArray)item["phases"];
+
+		for(int i = 1; i <= (int)phase_item_count.Count; i++){
+
+			JObject phase_item = (JObject)item["phases"][i - 1];
+
+			string phaseType = (string)phase_item["type"];
+			Debug.LogWarning("PHASETYPE : " + phaseType);
+
+			switch(phaseType){
+				case "Move" : 
+					MovePhase move = new MovePhase();
+					move.Destination = (string)phase_item["destination"];
+					move.BridgeMsg = (string)phase_item["bridgemsg"];
+					rtnList.Add(move);
+					break;
+
+				case "Talk" :
+					TalkPhase talk = new TalkPhase();
+					List<Line> lines = new List<Line>();
+					JArray line_item = (JArray)item["phases"][i - 1]["lines"];
+					Debug.LogWarning("TALKLINE COUNT : " + line_item.Count);
+					for(int ino = 1; ino <= (int)line_item.Count; ino++){
+						Line lineclass = new Line();
+						lineclass.who = (string)line_item[ino - 1]["who"];
+						lineclass.what = (string)line_item[ino - 1]["what"];
+						lines.Add(lineclass);
+					}
+					talk.lines = lines;
+					rtnList.Add(talk);
+					break;
+
+
+				case "Battle" :
+					BattlePhase battle = new BattlePhase();
+					JArray vln_item = (JArray)item["phases"][i - 1]["villains"];
+					Dictionary<string, int> villaindir = InstantiateVillainDicJson(vln_item);
+					battle.villainList = AddVillanByDict(villaindir);					
+					rtnList.Add(battle);
+					break;
+
+
+				case "Search" :
+					SearchPhase search = new SearchPhase();
+					search.Object = (string)phase_item["object"];
+					search.FindMsg = (string)phase_item["FindMsg"];
+					rtnList.Add(search);
+					break;
+
+
+				default :
+					break;
+			}
+
+		}
+
+		frc.MissionResourceType = "";
+		frc.MissionResourceValue = 0;
+		frc.MissionExp = 0;
+
+	}
+
+
 	public void FinishFreeroam(FreeRoamClass frc){
 		ResourceManager.Instance.VulkResource(frc.HoldResources);
 		frc.AppliedHero.Status = 0;
+		FreeRoamList.Remove(frc);
 	}
 
 	private RestPhase setRestPhase(){

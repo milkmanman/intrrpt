@@ -80,8 +80,15 @@ public class HeroStatusClass {
 		}
 
 		public int Exp{
-			get {return exp;}
+			get {
+					if(exp == null){exp = 0;}
+					return exp;
+				}
 			set {exp = value;}
+		}
+
+		public int Lv{
+			get {return (exp / 100) + 1;}
 		}
 
 		public string StatusMessage (){
