@@ -64,6 +64,10 @@ public class ClickObject : MonoBehaviour {
 						FocusCamera(obj);
 						GUI.GetComponent<UIActivator>().Activator(8);
 						break;
+					case "Character/Operation" :
+						FocusCamera(obj);
+						GUI.GetComponent<UIActivator>().Activator(9);
+						break;
 					case "Arrow" :
 						ShortMissionUI.HoldArrow = obj;
 						obj.GetComponent<Arrow>().GetClicked();

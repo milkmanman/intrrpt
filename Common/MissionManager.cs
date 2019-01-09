@@ -36,10 +36,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		routineList = new List<IEnumerator>();
 		MissionList = new List<MissionClass>();
 		FreeRoamList = new List<FreeRoamClass>();
-		/*for(int i = 1; i <= 6; i++){
-			MissionClass emptyMC = new MissionClass();
-			MissionList.Add(emptyMC);
-		}*/
 
 		MissionDoc = new XmlDocument();
 		MissionDoc.LoadXml(MissionDB_Phase1.text);
@@ -51,7 +47,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 		completedMission = SetCompletedMission();
 		selectableMission = SetSelectableMission();
 		selectableMissionClassList = setSelectableMissionList(selectableMission);
-		Debug.Log(selectableMissionClassList.Count);
 
 		//SetFreeroamPhaseFromJson();
 	}
@@ -170,10 +165,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 					Dictionary<string, int> villaindir = InstantiateVillainDic(vln);
 					battle.villainList = AddVillanByDict(villaindir);
 
-								//XmlNode node8 = MissionDoc.SelectSingleNode(@"//mission[@id=" + missionNo + "]/villains");
-								//Dictionary<string, int> villaindir = InstantiateVillainDic(node8);
-								//MisInfo.VillainList = AddVillanByDict(villaindir);
-					
 					rtnList.Add(battle);
 
 					break;
@@ -208,10 +199,9 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 	}
 
 	 private void setFreeroamExp(FreeRoamClass frc){
-		//frc.AppliedHero.Exp = frc.AppliedHero.Exp + 10;
 		frc.AppliedHero.Exp = frc.AppliedHero.Exp + frc.MissionExp;
-		frc.MissionLog = frc.MissionLog + "!! get exp !!" + "\n";
-		frc.PhaseListHistory.Last().Log = frc.PhaseListHistory.Last().Log + "!! get exp !!" + "\n";
+		frc.MissionLog = frc.MissionLog + "!! get exp :" + frc.MissionExp.ToString() + "\n";
+		frc.PhaseListHistory.Last().Log = frc.PhaseListHistory.Last().Log + "!! get exp :" + frc.MissionExp.ToString() + "\n";
 		frc.SumIncreaseExp += frc.MissionExp;
 		Debug.LogWarning("SumIncreaseExp : " + frc.SumIncreaseExp.ToString());
 	}
@@ -369,8 +359,10 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 				} else {
 
-					//setFreeroamExp(frc);
+					setFreeroamExp(frc);
 					setFreeroamHoldResource(frc);
+					frc.CountSuccessedMission++;
+					Debug.LogWarning("SuccessedMission : " + frc.CountSuccessedMission.ToString());
 				}
 
 			}
@@ -496,7 +488,6 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 		frc.MissionResourceType = (string)item["rewardType"];
 		frc.MissionResourceValue = (int)item["rewardValue"];
-
 		frc.MissionExp = (int)item["exp"];
 
 		JArray phase_item_count = (JArray)item["phases"];
@@ -555,10 +546,7 @@ public class MissionManager : SingletonMonoBehaviourFast<MissionManager> {
 
 		}
 
-		frc.MissionResourceType = "";
-		frc.MissionResourceValue = 0;
-		frc.MissionExp = 0;
-
+		
 	}
 
 

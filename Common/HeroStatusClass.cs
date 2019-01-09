@@ -70,7 +70,7 @@ public class HeroStatusClass {
 		}
 
 		public float Atk{
-			get {return atk;}
+			get {return atk + (Lv * 2);}
 			set {atk = value;}
 		}
 
@@ -89,6 +89,10 @@ public class HeroStatusClass {
 
 		public int Lv{
 			get {return (exp / 100) + 1;}
+		}
+
+		public float nextLv{
+			get {return (float)(exp % 100) / 100f;}
 		}
 
 		public string StatusMessage (){

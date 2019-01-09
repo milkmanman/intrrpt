@@ -14,6 +14,7 @@ public class FreeRoamClass : BaseMissionClass {
 	private int missionExp;
 	private Dictionary<string, int> holdResources;
 	private int sumIncreaseExp;
+	private int countSuccessedMission;
 
 
 	public int CashReward{
@@ -56,8 +57,14 @@ public class FreeRoamClass : BaseMissionClass {
 		set {sumIncreaseExp = value;}
 	}
 
+	public int CountSuccessedMission{
+		get {return countSuccessedMission;}
+		set {countSuccessedMission = value;}
+	}
+
 	public FreeRoamClass(){
 		SumIncreaseExp = 0;
+		CountSuccessedMission = 0;
 	}
 
 }

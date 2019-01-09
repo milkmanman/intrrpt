@@ -14,6 +14,7 @@ public class CityFreeroamUI : MonoBehaviour {
 	public GameObject HeroStatus;
 	private int maxHealth;
 	private Image HealthBar;
+	private Text LvText;
 	private Image ExpBar;
 	private Text HealthText;
 	public GameObject button;
@@ -30,6 +31,8 @@ public class CityFreeroamUI : MonoBehaviour {
 		HeroName = HeroStatus.transform.Find("HeroName").GetComponent<Text>();
 		HealthBar = HeroStatus.transform.Find("Health/Bar").GetComponent<Image>();
 		HealthBar.fillAmount = 1.0f;
+		LvText = HeroStatus.transform.Find("Exp/LvText").GetComponent<Text>();
+		LvText.text = "N/A";
 		ExpBar = HeroStatus.transform.Find("Exp/Bar").GetComponent<Image>();
 		ExpBar.fillAmount = 0.0f;
 		HealthText = HeroStatus.transform.Find("Health/Text").GetComponent<Text>();
@@ -100,7 +103,9 @@ public class CityFreeroamUI : MonoBehaviour {
 		while(mctest.ActiveFlg == true){
 			missionLog.text = mctest.MissionLog;
 			HealthBar.fillAmount = (float)mctest.AppliedHero.Health / (float)mctest.AppliedHero.MaxHealth;
-			ExpBar.fillAmount = (float)(mctest.AppliedHero.Exp) / 500f;
+			//ExpBar.fillAmount = (float)(mctest.AppliedHero.Exp) / 500f;
+			LvText.text = "Lv : " + mctest.AppliedHero.Lv.ToString();
+			ExpBar.fillAmount = mctest.AppliedHero.nextLv;
 
 			HealthText.text = "Health : " + mctest.AppliedHero.Health.ToString() + "/" + mctest.AppliedHero.MaxHealth.ToString();
 			yield return new WaitForSeconds(1);
@@ -113,7 +118,9 @@ public class CityFreeroamUI : MonoBehaviour {
 		if(frc != null){
 			missionLog.text = frc.MissionLog;
 			HealthBar.fillAmount = (float)frc.AppliedHero.Health / (float)frc.AppliedHero.MaxHealth;
-			ExpBar.fillAmount = (float)(frc.AppliedHero.Exp) / 500f;
+			//ExpBar.fillAmount = (float)(frc.AppliedHero.Exp) / 500f;
+			LvText.text = "Lv : " + frc.AppliedHero.Lv.ToString();
+			ExpBar.fillAmount = frc.AppliedHero.nextLv;
 
 			HealthText.text = "Health : " + frc.AppliedHero.Health.ToString() + "/" + frc.AppliedHero.MaxHealth.ToString();
 			DisplayResource();

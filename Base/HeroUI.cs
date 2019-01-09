@@ -61,7 +61,8 @@ public class HeroUI : MonoBehaviour {
 
 		if(hero.Exp != null) {
 			float ExpPercentage = (float)(hero.Exp) / 500f;
-			EXPBar.fillAmount = ExpPercentage;
+			//EXPBar.fillAmount = ExpPercentage;
+			EXPBar.fillAmount = hero.nextLv;
 		}
 
 		if(hero.Costume == null){

@@ -13,6 +13,7 @@ public class UIActivator : MonoBehaviour {
 	public GameObject MedicUI;
 	public GameObject OptionUI;
 	public GameObject RecruitUI;
+	public GameObject OperationUI;
 
 	public Canvas HeroUIcanvas;
 	public Canvas MissionUIcanvas;
@@ -22,10 +23,12 @@ public class UIActivator : MonoBehaviour {
 	public Canvas MedicUIcanvas;
 	public Canvas OptionUIcanvas;
 	public Canvas RecruitUIcanvas;
+	public Canvas OperationUIcanvas;
 
 	public Action OnEnabledWholeUI;
 	public Action OnEnabledMedicUI;
 	public Action OnEnabledDevelopUI;
+	public Action OnEnabledOperationUI;
 
 
 		/*public void Activator(int a){
@@ -81,6 +84,7 @@ public class UIActivator : MonoBehaviour {
 			MedicUIcanvas.enabled = false;
 			OptionUIcanvas.enabled = false;
 			RecruitUIcanvas.enabled = false;
+			OperationUIcanvas.enabled = false;
 
 			switch(a){
 				case 1:
@@ -110,7 +114,11 @@ public class UIActivator : MonoBehaviour {
 					break;
 				case 8:
 					RecruitUIcanvas.enabled = true;
-				break;
+					break;
+				case 9:
+					OperationUIcanvas.enabled = true;
+					OnEnabledOperationUI();
+					break;
 				default:
 					break;
 			}
